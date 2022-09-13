@@ -1,10 +1,141 @@
-* {
-    box-sizing: border-box;
-
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap');
+:root{
+    --navbar-color: rgb(167, 100, 0);
+    --hover-color:  rgb(189, 189, 189);
+    --active-color: rgb(255, 255, 255);
+    --footer-color: rgb(68, 68, 68);
+    --img-map: url('../img/planisferio.jpg');
+    --img-background: url('../img/museo-nacional-bellas-artes-1500x610-interior.jpg')
 }
 
-body {
+body{
+    /* overflow: hidden; */
+}
+
+
+.header-default{
+    margin: 0;
+}
+
+.nav-bar{
+    display: block;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 50px;
+    background-color: var(--navbar-color);
+    font-family: 'Source Sans Pro', sans-serif;
+    box-shadow: 1px 1px 10px black;
+    visibility: hidden;
+}
+
+.nav-bar_box {
+    list-style-type: none;
     margin: 0;
     padding: 0;
-    background-color: rgb(237, 237, 237);
 }
+
+.nav-bar_element{
+    font-size: 13px;
+    margin-left: -3px;
+    display: inline-block;
+    width: 12%;
+    height: 50px;
+    text-align: center;
+}
+
+.nav-bar_element:hover{
+    border-bottom: 4px solid var(--hover-color);
+}
+
+.nav-bar_element:hover > a{
+    color: var(--hover-color);
+}
+
+.right{
+    float: right;
+}
+
+
+.nav-bar_element > a{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: var(--active-color);
+    margin-top: 10px;
+}
+
+.nav-bar_icon{
+    width: 150px;
+    height: 50px;
+    margin-right: 5%;
+}
+
+.active{
+   border-bottom: 4px solid var(--active-color);
+}
+
+.section-top{
+    /*margin-top: 75px;*/
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+    font-size: 6vh;
+
+} 
+
+.section-top__h1{
+    margin: 100px 24px;
+}
+
+.img__muestra{
+    position: absolute;
+    top: 0;
+    background-image: var(--img-background);
+    background-repeat: no-repeat;
+
+    background-size: 100% 100%;
+}
+
+
+.map-section-content{
+
+}
+
+.container{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 300px;
+    grid-column-gap: 40px;
+    
+    height: auto;
+}
+
+.footer-default{
+    margin-top: 50px;
+    background-color: var(--footer-color);
+    height: 100px;
+    width: 100wh;
+}
+
+article{
+    margin: 0 20px;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+.img__mapmuseo{
+    background-image: var(--img-map);
+    background-repeat: no-repeat;
+
+    background-size: 100% 100%;
+}
+
+
+.point {
+    display: inline-block;
+    position: relative;
+}
+
+
+
