@@ -10,6 +10,7 @@
 
 body{
     /* overflow: hidden; */
+    overflow-x: hidden;
 }
 
 
@@ -19,14 +20,14 @@ body{
 
 .nav-bar{
     display: block;
-    position: fixed;
+    position: relative;
     top: 0;
     width: 100%;
     height: 50px;
     background-color: var(--navbar-color);
     font-family: 'Source Sans Pro', sans-serif;
     box-shadow: 1px 1px 10px black;
-    visibility: hidden;
+    opacity: 0;
 }
 
 .nav-bar_box {
@@ -76,18 +77,98 @@ body{
    border-bottom: 4px solid var(--active-color);
 }
 
-.section-top{
-    /*margin-top: 75px;*/
-    margin: 0;
+
+@keyframes swipe {
+    from{
+        top: 0;
+    }
+    to{
+        top: -1000px;
+    }
+    
+}
+
+@keyframes hidden {
+    from{
+        opacity: 1;
+    }
+    to{
+        opacity: 0;
+    }
+}
+
+@keyframes show {
+    from{
+        opacity: 0;
+    }
+    to{
+        opacity: 1;
+    }
+}
+
+
+.swipe-img{
+    top: 0;
+    position: absolute;
     width: 100vw;
     height: 100vh;
-    font-size: 6vh;
 
+    background-image: var(--img-background);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    filter: blur(4px);
+    /*animation: swipe 5s forwards ease-in-out;*/
+   
 } 
 
-.section-top__h1{
-    margin: 100px 24px;
+.swipe-text{
+    position: absolute;
+    top:  10%;
+    left: 25%;
+    color: var(--active-color);
+    filter: none ;
+    z-index: 1000;
+    font-size: 9vh;
+    /*animation: swipe 5s forwards ease-in-out;*/
 }
+
+.swipe-animation{
+    animation: swipe 5s 2s forwards ease-in-out;
+}
+
+.hidden-animation{
+    animation: hidden 2s forwards ease-in-out;
+}
+
+.show-animation {
+    animation: show 1s 5s forwards ease-in-out ;
+}
+
+.article{
+    margin-top: 20px;
+    opacity: 0;
+}
+
+.swipe-button{
+    position: absolute;
+    top:  70%;
+    left: 40%;
+    color: var(--active-color);
+    filter: none ;
+    z-index: 1000;
+    font-size: 9vh;
+    border: 3px solid var(--active-color);
+    transition: all .5;
+}
+
+
+
+.swipe-button:hover{
+
+    color: var(--hover-color);
+    border: 3px solid var(--hover-color);
+}
+
 
 .img__muestra{
     position: absolute;
@@ -99,9 +180,6 @@ body{
 }
 
 
-.map-section-content{
-
-}
 
 .container{
     display: grid;
@@ -127,7 +205,6 @@ article{
 .img__mapmuseo{
     background-image: var(--img-map);
     background-repeat: no-repeat;
-
     background-size: 100% 100%;
 }
 
