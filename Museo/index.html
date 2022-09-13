@@ -9,21 +9,21 @@
     <title>Museo</title>
 </head>
 <body>
-    <header class="header-default">
+    <header class="header-default ">
         <nav id="nav" class="nav-bar">
             <ul class="nav-bar_box">
-                <li class="nav-bar_element nav-bar_icon active"><a href="./index.html">HOME</a></li>
+                <li id="home"class="nav-bar_element nav-bar_icon active"><a href="#home">HOME</a></li>
                 <li class="nav-bar_element"><a href="./index.html#reserva">HACER UNA RESERVA</a></li>
                 <li class="nav-bar_element"><a href="./index.html#visitadigital">VISITA DIGITAL</a></li>
                 <li class="nav-bar_element"><a href="./index.html#mapasinstalacion">MAPA DE LAS INSTALACIONES</a></li>
-                <li class="nav-bar_element right"><a href="/view/login.html">ACCEDER</a></li>
+                <li id="access" class="nav-bar_element right"><a  href="#user">ACCEDER</a></li>
             </ul>
         </nav>
     </header>
     <div id="root"> <!-- ROOT TO PUSH HTML-ELEMENT -->
-        <h1  id="sw-text" class="swipe-text " > Bienvenidx, visitantx! </h1>
+        <!--<h1  id="sw-text" class="swipe-text " > Bienvenidx, visitantx! </h1>
         <div id="sw-img" class="swipe-img"></div>
-        <h1  id="sw-button" class="swipe-button " > EXPLORAR </h1>
+        <h1  id="sw-button" class="swipe-button " > EXPLORAR </h1>-->
         <aside></aside>
         <article id="article-index" class="article">
             <section class="first-section-content">
@@ -68,6 +68,6 @@
 
     
     <script src="./src/public/js/index.js"></script>
-    <script src="./src/services/index.service.js"></script>
+    <script src="./src/services/index.service.js" ></script> <!-- type="module" -->
 </body>
 </html>

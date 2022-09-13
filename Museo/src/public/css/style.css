@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap');
 :root{
-    --navbar-color: rgb(167, 100, 0);
+    --navbar-color: rgb(143, 0, 0);
     --hover-color:  rgb(189, 189, 189);
     --active-color: rgb(255, 255, 255);
     --footer-color: rgb(68, 68, 68);
@@ -27,7 +27,7 @@ body{
     background-color: var(--navbar-color);
     font-family: 'Source Sans Pro', sans-serif;
     box-shadow: 1px 1px 10px black;
-    opacity: 0;
+    opacity: 1;
 }
 
 .nav-bar_box {
@@ -146,7 +146,7 @@ body{
 
 .article{
     margin-top: 20px;
-    opacity: 0;
+    opacity: 1 /**/;
 }
 
 .swipe-button{
