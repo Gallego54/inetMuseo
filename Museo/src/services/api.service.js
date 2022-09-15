@@ -2,7 +2,7 @@
 
 // API CONSUME //
 
-const consumeAPI = (url, params) => {
+export default function consumeAPI (url, params) {
     return new Promise ((res, rej) => {
         window.fetch(url, params)
             .then(response => response.json())  

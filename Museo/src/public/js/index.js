@@ -1,11 +1,16 @@
+import MuseoRender from '../../services/render.service.js';
+
+const delayAnimation = 1;
 
 window.onload = () => {
-    consumeAPI('https://api.github.com/users/manishmshiva').then(json => console.log(json));
-    /*addPoint(1);
-    addPoint(1);
-    addPoint(1);*/
-    const render = new MuseoRender();
-    render.renderHome();
+    //consumeAPI('https://api.github.com/users/manishmshiva').then(json => console.log(json));
+    
+
+    const MuseoRenderInstance =  MuseoRender ();
+
+    setTimeout(()=>{
+        MuseoRenderInstance.startUp();
+    }, delayAnimation);
 }
 
 
