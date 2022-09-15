@@ -1,6 +1,6 @@
 import consumeAPI from '../services/api.service.js';
-import {ElementGenerator, ElementManagement} from '../services/render.service.js'
-import { createSession } from './Session.js'
+import MuseoRender, {ElementGenerator, ElementManagement} from '../services/render.service.js'
+import { createSession } from '../controller/Session.js'
 
 
 const Generator = new ElementGenerator();
@@ -17,7 +17,7 @@ export default function GuestViewsController(){
         }
     }
 
-    const renderNav = () => {
+    const renderNav = (dependenciesIdNav) => {
         const root =  document.getElementById('nav');
 
         Generator.removeAllElements(root);
@@ -46,13 +46,16 @@ export default function GuestViewsController(){
         Manager.classAdder('home', 'nav-bar_icon'); 
         Manager.classAdder('home', 'active'); 
 
-        Manager.classAdder('access', 'right'); 
+        Manager.classAdder('access', 'right');
+        
+        setViews(dependenciesIdNav);
     }
 
 
 
     const renderHome = () => {
-        renderNav();   
+        renderNav(getDependencies());   
+        
 
         Generator.removeAllElements(Generator.getRoot());
         Manager.setActiveClass(['home','reserva','visitadigital','access'], 'home');
@@ -71,21 +74,8 @@ export default function GuestViewsController(){
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Architecto animi illum asperiores fugit cumque nisi atque, nihil officia eligendi voluptatibus quidem velit dolorem impedit. Sint at optio suscipit nemo quo.
                 Lorem ipsum dolor, sit amet consectetur adipisicing elit. Neque labore voluptatum qui, at nulla ex eligendi debitis natus rerum quae doloribus, atque aspernatur error repellat corporis vitae minima aut accusamus!`]
                 ),
-            
-            Generator.makeElement('section', {id:'reserva', class: 'section-content'}, [
-                Generator.makeElement('h1', {},['Reserva']),
-                `Lorem ipsum, dolor sit amet consectetur adipisicing elit. Tempore in maiores maxime eum, dolorum rem! Dolorum eveniet excepturi doloribus quibusdam! Eum ipsum maxime repudiandae ut saepe ea nam sed ipsa.
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Architecto animi illum asperiores fugit cumque nisi atque, nihil officia eligendi voluptatibus quidem velit dolorem impedit. Sint at optio suscipit nemo quo.
-                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Neque labore voluptatum qui, at nulla ex eligendi debitis natus rerum quae doloribus, atque aspernatur error repellat corporis vitae minima aut accusamus!`
-            ]),
 
-            Generator.makeElement('section', {id:'visitadigital', class: 'section-content'}, [
-                Generator.makeElement('h1', {}, ['Visita Digital']),
-                `Lorem ipsum, dolor sit amet consectetur adipisicing elit. Tempore in maiores maxime eum, dolorum rem! Dolorum eveniet excepturi doloribus quibusdam! Eum ipsum maxime repudiandae ut saepe ea nam sed ipsa.
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Architecto animi illum asperiores fugit cumque nisi atque, nihil officia eligendi voluptatibus quidem velit dolorem impedit. Sint at optio suscipit nemo quo.
-                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Neque labore voluptatum qui, at nulla ex eligendi debitis natus rerum quae doloribus, atque aspernatur error repellat corporis vitae minima aut accusamus!`
-            ]),
-
+                
             Generator.makeElement('section', {id:'map-section-content', class: 'section-content'}, [
                 Generator.makeElement('h1', {}, ['Mapa de las Instalaciones']),
                 
@@ -123,10 +113,26 @@ export default function GuestViewsController(){
     
         Manager.listenerAdder('id-form', 'submit', event => {
             event.preventDefault()
-            console.log({
+            const body = {
                 username: document.getElementById('user').value,
                 password: document.getElementById('pass').value,
-            })
+            }
+
+            createSession(body).then(x => {
+                if (x) {
+                    const MR = new MuseoRender();
+                    MR.startUp();
+                }
+            });
+            /*
+                {
+                    "username":"pio",    
+                    "password":"1233"
+                    
+                }
+            */ 
+
+         
     
             /*Use Middleware*/ 
         })
@@ -222,44 +228,44 @@ export default function GuestViewsController(){
         Generator.removeAllElements(Generator.getRoot());
         const root = Generator.makeElement('article', {class: 'article'},
         [
-            Generator.makeElement('section', {class: 'container'}, [
+            Generator.makeElement('section', {class: 'small-container'}, [
                 Generator.makeElement('div', {},[
-                    Generator.makeElement('h1', {class: 'title-content'}),
-                    'Contenido'
+                    Generator.makeElement('h1', {class: 'title-content'}, ['La Gioconda']),
+                    Generator.makeElement('p', {class: 'content'}, ['El retrato de Lisa Gherardini, esposa de Francesco del Giocondo, ​ más conocido como La Gioconda o Monna Lisa, es una obra pictórica del polímata renacentista italiano Leonardo da Vinci.'])
                 ]),
                 Generator.makeElement('div', {}, [
-                    Generator.makeElement('img', {class: 'img-visita-digital'}),
+                    Generator.makeElement('div', {class: 'img-visita-digital-1'}),
                 ])
             ]),
 
-            Generator.makeElement('section', {class: 'container'}, [
+            Generator.makeElement('section', {class: 'small-container'}, [
                 Generator.makeElement('div', {}, [
-                    Generator.makeElement('img', {class: 'img-visita-digital'}),
+                    Generator.makeElement('img', {class: 'img-visita-digital-2'}),
                 ]),
 
                 Generator.makeElement('div', {}, [
-                    Generator.makeElement('h1', {class: 'title-content'}),
-                    'Contenido'
+                    Generator.makeElement('h1',  {class: 'title-content'}, ['La noche estrellada']),
+                    Generator.makeElement('p', {class: 'content'}, ['La noche estrellada es un óleo sobre lienzo del pintor postimpresionista neerlandés Vincent van Gogh. Pintado en junio de 1889, representa la vista desde la ventana orientada al este de su habitación de asilo en Saint-Rémy-de-Provence, justo antes del amanecer, con la adición de un pueblo imaginario.​​​'])
                 ])
             ]),
 
-            Generator.makeElement('section', {class: 'container'}, [
+            Generator.makeElement('section', {class: 'small-container'}, [
                 Generator.makeElement('div', {}, [
-                    Generator.makeElement('h1', {class: 'title-content'}),
-                    'Contenido'
+                    Generator.makeElement('h1', {class: 'title-content'}, ['La última cena']),
+                    Generator.makeElement('p', {class: 'content'}, ['La última cena es una pintura mural original de Leonardo da Vinci ejecutada entre 1495 y 1498.​​ Se encuentra en la pared sobre la que se pintó originalmente, en el refectorio del convento dominico de Santa Maria delle Grazie, en Milán, ​ declarado Patrimonio de la Humanidad por la Unesco en 1980.'])
                 ]),
                 Generator.makeElement('div', {}, [
-                    Generator.makeElement('img', {class: 'img-visita-digital'}),
+                    Generator.makeElement('img', {class: 'img-visita-digital-3'}),
                 ])
             ]),
 
-            Generator.makeElement('section', {class: 'container'}, [
+            Generator.makeElement('section', {class: 'small-container'}, [
                 Generator.makeElement('div', {}, [
-                    Generator.makeElement('img', {class: 'img-visita-digital'}),
+                    Generator.makeElement('img', {class: 'img-visita-digital-4'}),
                 ]),
                 Generator.makeElement('div', {}, [
-                    Generator.makeElement('h1', {class: 'title-content'}),
-                    'Contenido'
+                    Generator.makeElement('h1', {class: 'title-content'}, ['Desnudo bajando una escalera nº2']),
+                    Generator.makeElement('p', {class: 'content'}, ['Desnudo bajando una escalera nº2 es una pintura de 1912 por Marcel Duchamp. El trabajo es considerado como un clásico modernista y se ha convertido en uno de los más famosos de su tiempo.'])
                 ]),
             ])
 
@@ -268,20 +274,23 @@ export default function GuestViewsController(){
         Generator.getRoot().appendChild(root);
     }
 
+    const getDependencies = ()=>{
+        const dependenciesIdNav = {
+            'home': renderHome,
+            'access': renderLoggin, 
+            'reserva': renderReserva,
+            'visitadigital': renderDigitalVisit
+        }
+
+        return dependenciesIdNav;
+    }
 
     return {
         startUp: function () {
-            const dependenciesIdNav = {
-                'home': renderHome,
-                'access': renderLoggin, 
-                'reserva': renderReserva,
-                'visitadigital': renderDigitalVisit
-            }
+
         
-    
-            renderNav();
             renderHome();
-            setViews(dependenciesIdNav);
+
         }
     }
 

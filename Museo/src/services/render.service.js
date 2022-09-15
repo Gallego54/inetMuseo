@@ -1,5 +1,5 @@
-import AdminViewsController from "../controller/AdminViews.js";
-import GuestViewsController from "../controller/GuestViews.js";
+import AdminViewsController from "../view/AdminViews.js";
+import GuestViewsController from "../view/GuestViews.js";
 
 
 import checkSession from "../middleware/checkUser";

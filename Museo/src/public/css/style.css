@@ -9,6 +9,12 @@
     --img-map: url('../img/planisferio.jpg');
     --img-background: url('../img/museo-nacional-bellas-artes-1500x610-interior.jpg');
     --img-monalisa: url('../img/Monalisa.jpg');
+
+
+    --img-giocando: url('../img/imgmuestra/gioconda-1.jpg');
+    --img-nocheestrellado: url('../img/imgmuestra/nocheestrellada-2.jpeg');
+    --img-ultimacena: url('../img/imgmuestra/ultimacena-3.jpg');
+    --img-escalera: url('../img/imgmuestra/desnudabajandoescalera-4.jpg');
 }
 
 body{
@@ -197,11 +203,27 @@ body{
     height: auto;
 }
 
+.small-container{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 300px;
+    grid-column-gap: 40px;
+    
+    height: 330px;
+    margin: 10px 5%;
+}
+
 .footer-default{
     margin-top: 50px;
     background-color: var(--footer-color);
     height: 100px;
-    width: 100wh;
+    width: 100vw;
+}
+
+
+.img__mapmuseo{
+    border: 1px solid black;
+    box-shadow: 1px 1px 4px black;
 }
 
 article{
@@ -209,10 +231,67 @@ article{
     font-family: 'Source Sans Pro', sans-serif;
 }
 
+.img-visita-digital-1{
+    width: 100%;
+    height: 100%;
+    background-position: center;
+    background-image: var(--img-giocando);
+    background-repeat: no-repeat;
+    border: none;
+    background-position: left;
+}
+
+.img-visita-digital-2{
+    width: 70%;
+    height: 100%;
+    background-position: left;
+    background-size: cover;
+    background: var(--img-nocheestrellado) no-repeat center center; 
+    object-fit: cover;
+    border: none;
+    margin-left: 30%;
+}
+
+.img-visita-digital-3{
+    width: 100%;
+    height: 100%;
+    background-position: center;
+    background-image: var(--img-ultimacena);
+    background-repeat: no-repeat;
+    border: none;
+}
+
+.img-visita-digital-4{
+    width: 100%;
+    height: 100%;
+    background-position: center;
+    background-image: var(--img-escalera);
+    background-repeat: no-repeat;
+    border: none;
+    background-position: left;
+}
+
+.center-content{
+    margin: 0 200px;
+}
+
+
 .img__mapmuseo{
     background-image: var(--img-map);
     background-repeat: no-repeat;
     background-size: 100% 100%;
+}
+
+.img__mapmuseo:active{
+    background-image: var(--img-map);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    position: absolute;
+    width: 90%;
+    height: 90%;
+    top: 5%;
+    left: 5%;
+    box-shadow: 1px 1px 10px black;
 }
 
 .point {
@@ -226,6 +305,7 @@ article{
     border: 1px solid var(--navbar-color);
     box-shadow: 1px 1px 5px var(--navbar-color);
     background-image: var(--img-background);
+    background-color: rgb(82, 0, 0);
     margin: 100px auto;
     width: 50vw;
     height: 400px;   
@@ -248,7 +328,7 @@ article{
     width: 100px;
     height: 100px;
     margin-top: 50px;
-    margin-left: 55%;
+    margin-left: 10%;
     font-family: 'Courier New', Courier, monospace;
     font-size: 110%;
     color: var(--active-color);
@@ -261,9 +341,8 @@ article{
 }
 
 .form-submit-user:hover{
-    width: 150px;
-    height: 150px;
-    margin-left: 57%;
+    width: 110px;
+    height: 110px;
     cursor: pointer;
     filter: brightness(150%);
     filter: blur(1px);

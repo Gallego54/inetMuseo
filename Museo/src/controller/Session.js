@@ -1,22 +1,20 @@
 import consumeAPI from "../services/api.service";
 
-const API_URL = '';
-
-
+const API_URL = 'http://localhost:5000/confirmarUsuarioAdmin';
 
 export function createSession(data){
     return new Promise ((res, rej) =>  { consumeAPI(API_URL, {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(data)
-        }).then(token => {
+        }).then((token) => {
             if (token) {
-                localStorage.setItem('sessionId', JSON.stringify(token));
-                res({message: 'session sucess'});
+                localStorage.setItem('sessionId', JSON.stringify(token[0]));
+                res(true);
             } else {
-                alert('No se pudo iniciar sesion');
-                rej({error: 'session failed'})
+                rej(false)
             }
         })
     });   

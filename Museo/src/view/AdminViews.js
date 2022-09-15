@@ -1,7 +1,7 @@
 import checkSession from '../middleware/checkUser';
 import consumeAPI from '../services/api.service';
 import MuseoRender, {ElementGenerator, ElementManagement} from '../services/render.service.js'
-
+import { deleteSession } from '../controller/Session';
 
 const Generator = new ElementGenerator();
 const Manager = new ElementManagement();
@@ -20,7 +20,7 @@ export default function AdminViewsController(){
         return false;
     }
 
-
+    
 
     const setViews = (dependenciesIdNav) => {
         const callViews = Object.values(dependenciesIdNav);
@@ -32,7 +32,7 @@ export default function AdminViewsController(){
     }
 
     
-    const renderNav = () => {
+    const renderNav = (dependenciesIdNav) => {
         if (preventSessionFail()) {
             const root =  document.getElementById('nav');
             Generator.removeAllElements(root);
@@ -58,6 +58,7 @@ export default function AdminViewsController(){
             Manager.classAdder('home', 'active'); 
         
             Manager.classAdder('access', 'right'); 
+            setViews(dependenciesIdNav)
         }
     }
 
@@ -65,7 +66,7 @@ export default function AdminViewsController(){
     const renderHome = () => {
         if (preventSessionFail()) {
             Generator.removeAllElements(Generator.getRoot());
-            renderNav();
+            renderNav(getDependencies());
     
             Manager.classAdder('home', 'active');
             Manager.classRemover('fecha', 'active');
@@ -77,7 +78,7 @@ export default function AdminViewsController(){
     const renderFechas = () => {
         if (preventSessionFail()) {
             Generator.removeAllElements(Generator.getRoot());
-
+            Manager.setActiveClass(['home', 'fecha', 'exposiciones', 'access'], 'fecha')
 
             Generator.getRoot()
             .appendChild(Generator.makeElement('h1', {class: 'h1-display-table'}, ['Fechas de Visita']));
@@ -170,20 +171,28 @@ export default function AdminViewsController(){
         
     }
 
+    const logOut = () => {
+        deleteSession();
+        MREnder.startUp();
+    }
+
+    const getDependencies = ()=>{
+        const dependenciesIdNav = {
+            'home': renderHome,
+            'fecha': renderFechas, 
+            'exposiciones': ()=>{},
+            'access': logOut
+        }
+
+        return dependenciesIdNav;
+    }
+
+
 
     return  {
         startUp: function () {
-            const dependenciesIdNav = {
-                'home': renderHome,
-                'fecha': renderFechas, 
-                'exposiciones': ()=>{},
-                'access': ()=>{}
-            }
-
             if (preventSessionFail()) {
-                renderNav();
                 renderHome();
-                setViews(dependenciesIdNav);
             }
         }
     }
