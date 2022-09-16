@@ -58,7 +58,7 @@ export default function GuestViewsController(){
         
 
         Generator.removeAllElements(Generator.getRoot());
-        Manager.setActiveClass(['home','reserva','visitadigital','access', 'accesibilidad'], 'home');
+        Manager.setActiveClass(Object.keys(getDependencies()), 'home');
         
 
         Generator.getRoot()
@@ -99,7 +99,7 @@ export default function GuestViewsController(){
     
 
 
-        Manager.setActiveClass(['home','reserva','visitadigital', 'accesibilidad','access'], 'access');
+        Manager.setActiveClass(Object.keys(getDependencies()), 'access');
         
     
     
@@ -139,7 +139,7 @@ export default function GuestViewsController(){
     
 
     const renderReserva = () => {
-        Manager.setActiveClass(['home','reserva','visitadigital', 'accesibilidad','access'], 'reserva');
+        Manager.setActiveClass(Object.keys(getDependencies()), 'reserva');
         
 
         Generator.removeAllElements(Generator.getRoot());
@@ -214,7 +214,7 @@ export default function GuestViewsController(){
     }
 
     const renderDigitalVisit = () => {
-        Manager.setActiveClass(['home','reserva','visitadigital','access'], 'visitadigital');
+        Manager.setActiveClass(Object.keys(getDependencies()), 'visitadigital');
         
 
         /**/ 
@@ -270,7 +270,7 @@ export default function GuestViewsController(){
 
     const renderAccesibility = () => {
         Generator.removeAllElements(Generator.getRoot());
-        Manager.setActiveClass(['home','reserva','visitadigital','access', 'accesibilidad'], 'accesibilidad');
+        Manager.setActiveClass(Object.keys(getDependencies()), 'accesibilidad');
 
         Generator.getRoot()
         .appendChild(

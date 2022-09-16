@@ -48,6 +48,9 @@ export default function AdminViewsController(){
                     Generator.makeElement('li', {id: 'exposiciones', class: 'nav-bar_element'}, [
                         Generator.makeElement('a', { href:"#exposiciones"}, 'MANEJAR EXPOSICIONES')
                     ]),
+                    Generator.makeElement('li', {id: 'guias', class: 'nav-bar_element'}, [
+                        Generator.makeElement('a', { href:"#guias"}, 'MANEJAR GUIAS')
+                    ]),
                     Generator.makeElement('li', {id: 'access', class: 'nav-bar_element'}, [
                         Generator.makeElement('a', {href:"#user"}, 'SALIR')
                     ])
@@ -67,23 +70,30 @@ export default function AdminViewsController(){
         if (preventSessionFail()) {
             Generator.removeAllElements(Generator.getRoot());
             renderNav(getDependencies());
-    
-            Manager.classAdder('home', 'active');
-            Manager.classRemover('fecha', 'active');
-            Manager.classRemover('exposiciones', 'active');
-            Manager.classRemover('access', 'active');
+            
+            Generator.getRoot() 
+            .appendChild(Generator.makeElement('article', {class: 'article', id: 'article'}, [
+                Generator.makeElement('h1', {class: 'display-5'}, ['Bienvenido denuevo!']),
+                Generator.makeElement('p', {}, ['Texto Ejemplo'])
+            ]));
+
+            Manager.setActiveClass(Object.keys(getDependencies()), 'home')
         }
     }
 
     const renderFechas = () => {
         if (preventSessionFail()) {
             Generator.removeAllElements(Generator.getRoot());
-            Manager.setActiveClass(['home', 'fecha', 'exposiciones', 'access'], 'fecha')
+            Manager.setActiveClass(Object.keys(getDependencies()), 'fecha')
 
-            Generator.getRoot()
+            Generator.getRoot() 
+            .appendChild(Generator.makeElement('article', {class: 'article', id: 'article-content'}));
+
+            document.getElementById('article-content')
             .appendChild(Generator.makeElement('h1', {class: 'h1-display-table'}, ['Fechas de Visita']));
     
-            Generator.getRoot()
+
+            document.getElementById('article-content')
             .appendChild(Generator.makeElement('div', {class: 'container'}, [
                 Generator.makeElement('div', {id: 'row-1', class: 'row'}),
                 Generator.makeElement('div', {id: 'row-2', class: 'row'})
@@ -125,20 +135,33 @@ export default function AdminViewsController(){
     
             document.getElementById('row-1')
             .appendChild(Generator.makeElement('div', {class: 'dashboard-container'}, [
-                Generator.makeElement('button', {id: 'add-table-button', class: 'post-button'}, ['Agregar'])
+                Generator.makeElement('button', {id: 'add-table-button', class: 'form-submit-xl'}, ['Agregar'])
             ]))
 
             let buttonClose;
-            const cardElement = Generator.makeElement('form', { method: 'POST', class: 'card', action: '' }, [
-                Generator.makeElement("h1", {id:'card-header', class: "card-header"}, ['Card']),
+            let selectGuia;
+            const cardElement = Generator.makeElement('form', { method: 'POST', class: 'content-card', action: '' }, [
+                Generator.makeElement("h1", {id:'card-header', class: "card-header"}, ['Generar Visita']),
                 buttonClose = Generator.makeElement("button", {id:'card-closer', class: "card-close"}, ['Cerrar']),
-                Generator.makeElement("input", {id:'card-fecha', name: 'fecha', class: "form-text", type: "text"}),
-                Generator.makeElement("input", {id:'card-hora', name: 'hora', class: "form-text", type: "text"}),
-                Generator.makeElement("input", {id:'card-guia', name: 'guia', class: "form-text", type: "text"}),
-                Generator.makeElement("input", {id:'card-idiomas', name: 'idiomas', class: "form-text", type: "text"}),
-
+                Generator.makeElement("input", {id:'card-fecha', name: 'fecha', type: "datetime-local", class: 'form-date' }),
+                selectGuia = Generator.makeElement("select", {id:'card-guia', name: 'guia', class: "form-select"}, ['Guia']),
                 Generator.makeElement("input", {id:'card-submit', name: 'submit', class: "form-submit", type: "submit"}),
             ])
+
+            const urlGuiaContent = '';
+            /*consumeAPI()*/
+            const putGuiaContent = (x)=>{
+                if (x !== undefined && x.length > 0) {
+                    x.map(
+                        selectGuia.appendChild(Generator.makeElement('option', 
+                        {value: `${x.idGuia}`}, [`${x.nombre} ${x.apellido} (${x.idioma})`]))
+                    )
+                } else {
+                    selectGuia.appendChild(Generator.makeElement('option', {value: '1'}, ['Dato Prueba']))
+                }
+            } 
+            putGuiaContent(undefined);
+            
 
 
             Manager.listenerAdder('add-table-button', 'click', (e)=>{
@@ -152,24 +175,301 @@ export default function AdminViewsController(){
             })
 
 
-
+            const urlPOSTVisita = '';
             cardElement.addEventListener ('submit', (event)=>{
+                /*CONSUME api*/ 
                 event.preventDefault();
                 const data = new FormData(event.target);
                 const dataParse = [...data.values()]
 
+                const dateVisita = new Date(dataParse[0]);
+                const idGuia = dataParse[1];
+
                 console.log({
-                    fecha: dataParse[0],
-                    hora: dataParse[1],
-                    guia: dataParse[2],
-                    idiomas: dataParse[3]
+                    data:{
+                        fecha: 
+                        `${dateVisita.getDate()}-${(dateVisita.getMonth())+1}-${dateVisita.getFullYear()}`,
+                        hora:
+                        `${("0" + dateVisita.getHours()).slice(-2)}:${("0" + dateVisita.getMinutes()).slice(-2)}`,
+                        guiaId: parseInt(idGuia)
+                    }
                 })
+
+               
             })
 
         }
        
         
     }
+
+    const renderExposiciones = () => {
+        if (preventSessionFail()) {
+            Generator.removeAllElements(Generator.getRoot());
+            Manager.setActiveClass(Object.keys(getDependencies()), 'exposiciones')
+
+            Generator.getRoot() 
+            .appendChild(Generator.makeElement('article', {class: 'article', id: 'article-content'}));
+
+            document.getElementById('article-content')
+            .appendChild(Generator.makeElement('h1', {class: 'h1-display-table'}, ['Lista de Exposiciones']));
+    
+
+            document.getElementById('article-content')
+            .appendChild(Generator.makeElement('div', {class: 'container'}, [
+                Generator.makeElement('div', {id: 'row-1', class: 'row'}),
+                Generator.makeElement('div', {id: 'row-2', class: 'row'})
+            ]));
+        
+            document.getElementById('row-1')
+            .appendChild(
+                Generator.makeElement('table', {class: 'table-date'}, [
+                Generator.makeElement('tr', {}, [
+                    Generator.makeElement('td', {}, ['NOMBRE']),
+                    Generator.makeElement('td', {}, ['...']),
+                ]), 
+                Generator.makeElement('tr', {id: 'content-table'})
+            ]))
+    
+            const APIURL = '';
+            const focus = document.getElementById('content-table');
+            consumeAPI(APIURL, {}).then( data => {
+                data.map(e => {
+                    focus.appendChild(
+                        Generator.makeElement('tr', {}, [
+                            Generator.makeElement('td', {}, [e.nombre]),
+                            Generator.makeElement('td', {}, [e.content]),
+                            Generator.makeElement('td', {}, [e.content]),
+                            Generator.makeElement('td', {}, [e.content]),
+                            Generator.makeElement('td', {}, [
+                                Generator.makeElement('div', {class: 'dashboard-container'}, [
+                                    Generator.makeElement('button', {id: 'put-table-button', class: 'put-button'}, ['Editar']),
+                                    Generator.makeElement('button', {id: 'delete-table-button', class: 'delete-button'}, ['Eliminar'])
+                                ])
+                            ])
+                        ])
+                    )
+                })
+            })
+    
+            document.getElementById('row-1')
+            .appendChild(Generator.makeElement('div', {class: 'dashboard-container'}, [
+                Generator.makeElement('button', {id: 'add-table-button', class: 'form-submit-xl'}, ['Agregar'])
+            ]))
+
+            let buttonClose;
+            const cardElement = Generator.makeElement('form', { method: 'POST', class: 'content-card', action: '' }, [
+                Generator.makeElement("h1", {id:'card-header', class: "card-header"}, ['Generar Exposición']),
+                buttonClose = Generator.makeElement("button", {id:'card-closer', class: "card-close"}, ['Cerrar']),
+
+
+                Generator.makeElement("input", {id:'card-nombreexpo', name: 'nombreexpo', type: "text", placeholder: 'Nombre Exposicion...',class: 'form-text' }),
+                Generator.makeElement("input", {id:'card-contentASD', name: 'contentASD', type: "text", placeholder: '...',class: 'form-text' }),
+
+
+                Generator.makeElement("input", {id:'card-submit', name: 'submit', class: "form-submit", type: "submit"}),
+            ]) 
+
+
+            Manager.listenerAdder('add-table-button', 'click', (e)=>{
+                document.getElementById('row-2')
+                .appendChild(cardElement)
+            })
+
+            buttonClose.addEventListener('click', (e)=>{
+                document.getElementById('row-2')
+                .removeChild(cardElement)
+            })
+
+
+            const urlPOSTExpo = '';
+            cardElement.addEventListener ('submit', (event)=>{
+                /*CONSUME api*/ 
+                event.preventDefault();
+                const data = new FormData(event.target);
+                const dataParse = [...data.values()]
+
+    
+                console.log({
+                    data:{
+                        'nombre-expo': dataParse[0]
+                    }
+                })
+
+               
+            })
+
+        }
+       
+        
+    }
+
+    const renderGuias = () => {
+        if (preventSessionFail()) {
+            Generator.removeAllElements(Generator.getRoot());
+            Manager.setActiveClass(Object.keys(getDependencies()), 'guias')
+
+            Generator.getRoot() 
+            .appendChild(Generator.makeElement('article', {class: 'article', id: 'article-content'}));
+
+            document.getElementById('article-content')
+            .appendChild(Generator.makeElement('h1', {class: 'h1-display-table'}, ['Lista de Guias']));
+    
+
+            document.getElementById('article-content')
+            .appendChild(Generator.makeElement('div', {class: 'container'}, [
+                Generator.makeElement('div', {id: 'row-1', class: 'row'}),
+                Generator.makeElement('div', {id: 'row-2', class: 'row'})
+            ]));
+        
+            document.getElementById('row-1')
+            .appendChild(
+                Generator.makeElement('table', {class: 'table-date'}, [
+                Generator.makeElement('tr', {}, [
+                    Generator.makeElement('td', {}, ['Nombre Completo']),
+                    Generator.makeElement('td', {}, ['DNI']),
+                    Generator.makeElement('td', {}, ['Idiomas']),
+                ]), 
+                Generator.makeElement('tr', {id: 'content-table'})
+            ]))
+    
+            const APIURL = '';
+            const focus = document.getElementById('content-table');
+            consumeAPI(APIURL, {}).then( data => {
+                data.map(e => {
+                    focus.appendChild(
+                        Generator.makeElement('tr', {}, [
+                            Generator.makeElement('td', {}, [`${e.nombre} ${e.apellido}`]),
+                            Generator.makeElement('td', {}, [e.dni]),
+                            Generator.makeElement('td', {}, [e.idioma]),
+                            Generator.makeElement('td', {}, [
+                                Generator.makeElement('div', {class: 'dashboard-container'}, [
+                                    Generator.makeElement('button', {id: 'put-table-button', class: 'put-button'}, ['Editar']),
+                                    Generator.makeElement('button', {id: 'delete-table-button', class: 'delete-button'}, ['Eliminar'])
+                                ])
+                            ])
+                        ])
+                    )
+                })
+            })
+    
+            document.getElementById('row-1')
+            .appendChild(Generator.makeElement('div', {class: 'dashboard-container'}, [
+                Generator.makeElement('button', {id: 'add-table-button', class: 'form-submit-xl'}, ['Agregar'])
+            ]))
+
+            let buttonClose;
+            let checkContainer;
+            const cardElement = Generator.makeElement('form', { method: 'POST', class: 'content-card', action: '' }, [
+                Generator.makeElement("h1", {id:'card-header', class: "card-header"}, ['Añadir Guia']),
+                buttonClose = Generator.makeElement("button", {id:'card-closer', class: "card-close"}, ['Cerrar']),
+
+
+                Generator.makeElement("input", {id:'card-nombre-guia', name: 'nombre-guia', type: "text", placeholder: 'Nombre...',class: 'form-text-inline' }),
+                Generator.makeElement("input", {id:'card-apellido-guia', name: 'apellido-guia', type: "text", placeholder: 'Apellido...',class: 'form-text-inline' }),
+                Generator.makeElement("input", {id:'card-dni-guia', name: 'dni-guia', type: "number", placeholder: 'DNI',class: 'form-text-full' }),
+                checkContainer=Generator.makeElement("div", {id:'card-idiomas-guia', name: 'idiomas-guia', class: 'container' }),
+
+
+
+                Generator.makeElement("input", {id:'card-submit', name: 'submit', class: "form-submit", type: "submit"}),
+            ]) 
+
+
+            Manager.listenerAdder('add-table-button', 'click', (e)=>{
+                document.getElementById('row-2')
+                .appendChild(cardElement)
+            })
+
+            buttonClose.addEventListener('click', (e)=>{
+                document.getElementById('row-2')
+                .removeChild(cardElement)
+            })
+
+            const urlIdiomasContent = '';
+            /*consumeAPI()*/
+            const putGuiaIdiomasContent = (x)=>{
+                if (x !== undefined && x.length > 0) {
+                    x.map(
+                        checkContainer
+                        .appendChild(Generator.makeElement('div', {}, [
+                            Generator.makeElement('input', {name: 'idioma[]', type: 'checkbox', value: x.idIdioma}),
+                            Generator.makeElement('label', {for: ''}, [x.nombreIdioma])
+                        ]))
+                    )
+                } else {
+                    checkContainer
+                    .appendChild(Generator.makeElement('div', {}, [
+                        Generator.makeElement('input', {name: 'idioma[]', type: 'checkbox', value: '1'}, ['Español']),
+                        Generator.makeElement('label', {for: ''}, ['Español'])
+                    ]))
+
+                    checkContainer
+                    .appendChild(Generator.makeElement('div', {}, [
+                        Generator.makeElement('input', {name: 'idioma[]', type: 'checkbox', value: '2'}, ['Ingles']),
+                        Generator.makeElement('label', {for: ''}, ['Ingles'])
+                    ]))
+
+                    checkContainer
+                    .appendChild(Generator.makeElement('div', {}, [
+                        Generator.makeElement('input', {name: 'idioma[]', type: 'checkbox', value: '2'}, ['Ingles']),
+                        Generator.makeElement('label', {for: ''}, ['Ingles'])
+                    ]))
+
+                    checkContainer
+                    .appendChild(Generator.makeElement('div', {}, [
+                        Generator.makeElement('input', {name: 'idioma[]', type: 'checkbox', value: '2'}, ['Ingles']),
+                        Generator.makeElement('label', {for: ''}, ['Ingles'])
+                    ]))
+
+                    checkContainer
+                    .appendChild(Generator.makeElement('div', {}, [
+                        Generator.makeElement('input', {name: 'idioma[]', type: 'checkbox', value: '2'}, ['Ingles']),
+                        Generator.makeElement('label', {for: ''}, ['Ingles'])
+                    ]))
+
+                    checkContainer
+                    .appendChild(Generator.makeElement('div', {}, [
+                        Generator.makeElement('input', {name: 'idioma[]', type: 'checkbox', value: '2'}, ['Ingles']),
+                        Generator.makeElement('label', {for: ''}, ['Ingles'])
+                    ]))
+                }
+            } 
+            putGuiaIdiomasContent(undefined);
+            
+
+            const urlPOSTGuia = '';
+            cardElement.addEventListener ('submit', (event)=>{
+                /*CONSUME api*/ 
+                event.preventDefault();
+                const data = new FormData(event.target);
+                const dataParse = [...data.values()]
+
+                if (dataParse.length > 3) {
+                    const idiomas = dataParse.splice(3, dataParse.length);
+                    console.log({
+                        data:{
+                            nombre: dataParse[0],
+                            apellido: dataParse[1],
+                            dni: dataParse[2],
+
+                            idioma: [...idiomas]
+                        }
+                    })
+                }else{
+                    alert('Need idioma!');
+                }
+    
+
+
+               
+            })
+
+        }
+       
+        
+    }
+
 
     const logOut = () => {
         deleteSession();
@@ -180,7 +480,8 @@ export default function AdminViewsController(){
         const dependenciesIdNav = {
             'home': renderHome,
             'fecha': renderFechas, 
-            'exposiciones': ()=>{},
+            'exposiciones': renderExposiciones,
+            'guias': renderGuias,
             'access': logOut
         }
 

@@ -4,6 +4,6 @@ export default function checkSession(){
         return sessionId;
     } return false;*/
 
-    return false;
+    return true;
 
 }  

@@ -6,6 +6,10 @@
     --hover-color:  rgb(189, 189, 189);
     --active-color: rgb(255, 255, 255);
     --footer-color: rgb(68, 68, 68);
+    --post-color: rgb(0, 184, 0); 
+    --delete-color: rgb(150, 0, 0); 
+
+
     --img-map: url('../img/planisferio.jpg');
     --img-background: url('../img/museo-nacional-bellas-artes-1500x610-interior.jpg');
     --img-monalisa: url('../img/Monalisa.jpg');
@@ -239,11 +243,70 @@ article{
     font-size: 32px;
 }
 
+.form-text-inline{
+    display: inline;
+    margin-bottom: 5px;
+    margin-right: 1%;
+    width: 48%;
+}
+
+.form-text{
+    display: block;
+    margin-bottom: 5px;
+    width: 75%;
+}
+
+.form-text-full{
+    display: block;
+    margin-bottom: 5px;
+    width: 97%;
+}
+
+.form-date{
+    margin-top: 5px;
+    display: block;
+}
+
+.form-select{
+    margin-top: 5px;
+    display: block;
+}
+
+.card-close {
+    display: inline-block;
+    background-color: var(--delete-color);
+    border: none;
+    color: var(--active-color);
+    position: absolute;
+    margin-left: auto ;
+    top: 10%;
+    left: 90%;
+
+}
 
 .content-card{
+    position: relative;
     background-color: rgb(255, 255, 255);
     padding: 10px;
     box-shadow: 1px 1px 3px black;
+}
+
+.form-submit{
+    display: block;
+    border: none;
+    background-color: var(--post-color);
+    margin-left: auto ;
+    color: var(--active-color);
+}
+
+.form-submit-xl{
+    display: block;
+    border: none;
+    background-color: var(--post-color);
+    width: 100px;
+    height: 20px;
+    margin: 10px 10px;
+    color: var(--active-color);
 }
 
 .img-visita-digital-1{
