@@ -70,9 +70,11 @@ export default function GuestViewsController(){
                 Generator.makeElement('h1', {class: 'display-5'}, ['Bienvenidx, visitantx!']),
             ]), 
             Generator.makeElement('section', {id: 'home', class: 'section-content'}, 
-                [`Lorem ipsum, dolor sit amet consectetur adipisicing elit. Tempore in maiores maxime eum, dolorum rem! Dolorum eveniet excepturi doloribus quibusdam! Eum ipsum maxime repudiandae ut saepe ea nam sed ipsa.
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Architecto animi illum asperiores fugit cumque nisi atque, nihil officia eligendi voluptatibus quidem velit dolorem impedit. Sint at optio suscipit nemo quo.
-                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Neque labore voluptatum qui, at nulla ex eligendi debitis natus rerum quae doloribus, atque aspernatur error repellat corporis vitae minima aut accusamus!`]
+                [`Bienvenidos al museo de la TEC 2, donde encontrara las mejores obras de la epoca de la hummanidad
+                . Podra registrarse a una de nuestras visitas guiadas donde uno de nuestros guias en el idioma que usted
+                prefiera podra contarle la historias de nuestras obras como de la de nuestro museo. Antes de asisir puede
+                ver nuestra visita Guiada Digital para hacerse una idea de las obras que podra encontrar. ¿Le gusta el renacentismo? 
+                ¿Le gusta el classismo o las obra de Leonardo Davinci? Todo esto y mas podra verlo en nuestro museo. Los esperamos!!!!!!`]
                 ),
 
                 
@@ -82,9 +84,9 @@ export default function GuestViewsController(){
                 Generator.makeElement('div', {class: 'container'}, [
                     Generator.makeElement('div', {class: 'img__mapmuseo'}),
                     Generator.makeElement('div', {}, [
-                        `Lorem ipsum, dolor sit amet consectetur adipisicing elit. Tempore in maiores maxime eum, dolorum rem! Dolorum eveniet excepturi doloribus quibusdam! Eum ipsum maxime repudiandae ut saepe ea nam sed ipsa.
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Architecto animi illum asperiores fugit cumque nisi atque, nihil officia eligendi voluptatibus quidem velit dolorem impedit. Sint at optio suscipit nemo quo.
-                        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Neque labore voluptatum qui, at nulla ex eligendi debitis natus rerum quae doloribus, atque aspernatur error repellat corporis vitae minima aut accusamus!`
+                        `Aqui a nuestra derecha podra ver un mapa de nuestras instalaciones, La primera habitacion se trata sobre la epoca clasista, una epoca que viene en el arte despues barroco, donde los
+                        artistas quieran volver a un estilo artistico y musical mas apegado a epocas anteriores, por esto el nombre de esta se la considera clasisismo. En la segunda habitacion es dedicada a la Gioconda
+                        y las obras de Leonardo Davinci. Pero no contaremos mas, preferimos que usted vea por su propia cuenta las demas Exposiciones!!!`
                     ])
                 ])
                 
@@ -161,7 +163,7 @@ export default function GuestViewsController(){
 
         document.getElementById('row-1')
         .appendChild(
-            Generator.makeElement('table', {class: 'table-date'}, [
+            Generator.makeElement('table', {class: 'table-date', id: 'content-table'}, [
             Generator.makeElement('tr', {}, [
                 Generator.makeElement('td', {}, ['FECHA']),
                 Generator.makeElement('td', {}, ['HORA']),
@@ -169,29 +171,30 @@ export default function GuestViewsController(){
                 Generator.makeElement('td', {}, ['IDIOMAS']),
                 Generator.makeElement('td', {}, ['SUBSCRIBIRME']),
             ]), 
-            Generator.makeElement('tr', {id: 'content-table'})
         ]))
 
-        const APIURL = '';
+
+        const urlVisitaGuiada ='http://localhost:5000/VisitaGuiadaView';
         const focus = document.getElementById('content-table');
-        consumeAPI(APIURL, {}).then( data => {
-            data.map(e => {
+        consumeAPI(urlVisitaGuiada, {method: 'POST'}).then( data => {
+            data.forEach(e => {
+                console.log(data)
                 focus.appendChild(
                     Generator.makeElement('tr', {}, [
                         Generator.makeElement('td', {}, [e.fecha]),
                         Generator.makeElement('td', {}, [e.hora]),
-                        Generator.makeElement('td', {}, [e.guia]),
-                        Generator.makeElement('td', {}, [e.idiomas]),
+                        Generator.makeElement('td', {}, [`${e.nombre} ${e.apellido}`]),
+                        Generator.makeElement('td', {}, [e.idioma]),
                         Generator.makeElement('td', {}, [
                             Generator.makeElement('div', {class: 'dashboard-container'}, [
-                                Generator.makeElement('button', {value: e.id, id: 'pop-table-button', class: 'post-button'}, ['Subscribirme']),
+                                Generator.makeElement('button', {/*value: e.id,*/ id: 'pop-table-button', class: 'post-button'}, ['Subscribirme']),
                             ])
                         ])
                     ])
                 )
-            })
-        })
-
+            });
+        })      
+ 
 
         document.querySelectorAll('#pop-table-button').forEach(item => {
             item.addEventListener('click', event => {
@@ -290,7 +293,7 @@ export default function GuestViewsController(){
                     Generator.makeElement('div', {class: 'col'}, [
                         Generator.makeElement('h2', {class: 'title-content'}, ['Discapacidad Visual']),
                         Generator.makeElement('div', {class: 'icon-blind'}),
-                        Generator.makeElement('p', {class:'top-content'}, ['Los problemas de visión son los más comunes en personas adultas. Problemas tales como, vista corta (miopía), hipermetropía, astigmatismo y presbicia e incluso la ceguera completa pueden llegar a aparecer.  Estos problemas provocan dificultad para disfrutar las muestras de los museos.'])
+                    Generator.makeElement('p', {class:'top-content'}, ['Los problemas de visión son los más comunes en personas adultas. Problemas tales como, vista corta (miopía), hipermetropía, astigmatismo y presbicia e incluso la ceguera completa pueden llegar a aparecer.  Estos problemas provocan dificultad para disfrutar las muestras de los museos. Por esa razon somos el primer museo de mar de plata que tiene funcionalidades para personas con dificultades visuales en todos sus niveles'])
                     ]),
 
                     Generator.makeElement('div', {class: 'col'}, [
@@ -303,7 +306,7 @@ export default function GuestViewsController(){
                     Generator.makeElement('div', {class: 'col'}, [
                         Generator.makeElement('h2', {class: 'title-content'}, ['Discapacidad Motriz']),
                         Generator.makeElement('div', {class: 'icon-chair'}),
-                        Generator.makeElement('p', {class: 'top-content'}, ['Completar lucas palavecino'])
+                        Generator.makeElement('p', {class: 'top-content'}, ['Nuestro museo se encuentra completamente acoplado para personas con discapacidades motriz, queremos que el arte pueda llegar a todos y todas, no importa su condicion. Porque el arte es una parte importante del ser humano y como seres humanos tenemos que tener el derecho de contemplar y conocer'])
                     ]),
 
                     Generator.makeElement('div', {class: 'col'}, [

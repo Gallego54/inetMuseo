@@ -74,7 +74,7 @@ export default function AdminViewsController(){
             Generator.getRoot() 
             .appendChild(Generator.makeElement('article', {class: 'article', id: 'article'}, [
                 Generator.makeElement('h1', {class: 'display-5'}, ['Bienvenido denuevo!']),
-                Generator.makeElement('p', {}, ['Texto Ejemplo'])
+                Generator.makeElement('p', {}, ['Recuerde que puede administrar los datos de las Visitas Guiadas, comoa de los Guias. No olvide revisar los dni de los visitantes'])
             ]));
 
             Manager.setActiveClass(Object.keys(getDependencies()), 'home')
@@ -115,6 +115,7 @@ export default function AdminViewsController(){
             const APIURL = '';
             const focus = document.getElementById('content-table');
             consumeAPI(APIURL, {}).then( data => {
+  
                 data.map(e => {
                     focus.appendChild(
                         Generator.makeElement('tr', {}, [
@@ -263,8 +264,8 @@ export default function AdminViewsController(){
                 buttonClose = Generator.makeElement("button", {id:'card-closer', class: "card-close"}, ['Cerrar']),
 
 
-                Generator.makeElement("input", {id:'card-nombreexpo', name: 'nombreexpo', type: "text", placeholder: 'Nombre Exposicion...',class: 'form-text' }),
-                Generator.makeElement("input", {id:'card-contentASD', name: 'contentASD', type: "text", placeholder: '...',class: 'form-text' }),
+                Generator.makeElement("input", {id:'card-nombreexpo', name: 'titulo', type: "text", placeholder: 'Nombre Exposicion...',class: 'form-text' }),
+                Generator.makeElement("input", {id:'card-contentASD', name: 'descipcion', type: "text", placeholder: 'Descripcion',class: 'form-text' }),
 
 
                 Generator.makeElement("input", {id:'card-submit', name: 'submit', class: "form-submit", type: "submit"}),
@@ -324,33 +325,56 @@ export default function AdminViewsController(){
         
             document.getElementById('row-1')
             .appendChild(
-                Generator.makeElement('table', {class: 'table-date'}, [
+                Generator.makeElement('table', {id: 'content-table', class: 'table-date'}, [
                 Generator.makeElement('tr', {}, [
                     Generator.makeElement('td', {}, ['Nombre Completo']),
                     Generator.makeElement('td', {}, ['DNI']),
                     Generator.makeElement('td', {}, ['Idiomas']),
                 ]), 
-                Generator.makeElement('tr', {id: 'content-table'})
+               
             ]))
-    
-            const APIURL = '';
+            /*
+             
+            */ 
+            const APIURL = 'http://localhost:5000/ListarGuias';
             const focus = document.getElementById('content-table');
-            consumeAPI(APIURL, {}).then( data => {
-                data.map(e => {
+            
+            consumeAPI(APIURL, { method: 'GET' }).then( data => {
+                console.log(data)
+
+
+                data.forEach(e => {
+                    console.log(e.nombre)
                     focus.appendChild(
-                        Generator.makeElement('tr', {}, [
+                        Generator.makeElement('tr', {id: e.idGuia}, [
                             Generator.makeElement('td', {}, [`${e.nombre} ${e.apellido}`]),
                             Generator.makeElement('td', {}, [e.dni]),
                             Generator.makeElement('td', {}, [e.idioma]),
                             Generator.makeElement('td', {}, [
                                 Generator.makeElement('div', {class: 'dashboard-container'}, [
-                                    Generator.makeElement('button', {id: 'put-table-button', class: 'put-button'}, ['Editar']),
-                                    Generator.makeElement('button', {id: 'delete-table-button', class: 'delete-button'}, ['Eliminar'])
+                                    Generator.makeElement('button', {value:e.idGuia, id: 'delete-table-button', class: 'delete-button', name: 'buton-delete'}, ['Eliminar'])
                                 ])
                             ])
                         ])
                     )
                 })
+
+                document.getElementsByName('buton-delete').forEach(e => {
+                    const urlDelGuia = 'http://localhost:5000/cambiarEstadoGuia';
+                    e.addEventListener('click', ()=>{
+                        consumeAPI(urlDelGuia, {
+                            method: 'POST', 
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({idGuia: e.value})
+                        }).then(res =>{
+                            renderGuias();
+                            alert('Se elimino correctamente!');
+                        })
+                    })
+                })
+
             })
     
             document.getElementById('row-1')
@@ -386,59 +410,24 @@ export default function AdminViewsController(){
                 .removeChild(cardElement)
             })
 
-            const urlIdiomasContent = '';
-            /*consumeAPI()*/
-            const putGuiaIdiomasContent = (x)=>{
-                if (x !== undefined && x.length > 0) {
-                    x.map(
+            
+            const urlIdiomasContent = 'http://localhost:5000/listarIdioma';
+            consumeAPI(urlIdiomasContent, {method: 'GET'})
+            .then((data) => {
+                   /* console.log(data)
+                    console.log(checkContainer);*/
+                    data.forEach(x => {
                         checkContainer
                         .appendChild(Generator.makeElement('div', {}, [
                             Generator.makeElement('input', {name: 'idioma[]', type: 'checkbox', value: x.idIdioma}),
-                            Generator.makeElement('label', {for: ''}, [x.nombreIdioma])
+                            Generator.makeElement('label', {for: ''}, [x.idioma])
                         ]))
-                    )
-                } else {
-                    checkContainer
-                    .appendChild(Generator.makeElement('div', {}, [
-                        Generator.makeElement('input', {name: 'idioma[]', type: 'checkbox', value: '1'}, ['Español']),
-                        Generator.makeElement('label', {for: ''}, ['Español'])
-                    ]))
-
-                    checkContainer
-                    .appendChild(Generator.makeElement('div', {}, [
-                        Generator.makeElement('input', {name: 'idioma[]', type: 'checkbox', value: '2'}, ['Ingles']),
-                        Generator.makeElement('label', {for: ''}, ['Ingles'])
-                    ]))
-
-                    checkContainer
-                    .appendChild(Generator.makeElement('div', {}, [
-                        Generator.makeElement('input', {name: 'idioma[]', type: 'checkbox', value: '2'}, ['Ingles']),
-                        Generator.makeElement('label', {for: ''}, ['Ingles'])
-                    ]))
-
-                    checkContainer
-                    .appendChild(Generator.makeElement('div', {}, [
-                        Generator.makeElement('input', {name: 'idioma[]', type: 'checkbox', value: '2'}, ['Ingles']),
-                        Generator.makeElement('label', {for: ''}, ['Ingles'])
-                    ]))
-
-                    checkContainer
-                    .appendChild(Generator.makeElement('div', {}, [
-                        Generator.makeElement('input', {name: 'idioma[]', type: 'checkbox', value: '2'}, ['Ingles']),
-                        Generator.makeElement('label', {for: ''}, ['Ingles'])
-                    ]))
-
-                    checkContainer
-                    .appendChild(Generator.makeElement('div', {}, [
-                        Generator.makeElement('input', {name: 'idioma[]', type: 'checkbox', value: '2'}, ['Ingles']),
-                        Generator.makeElement('label', {for: ''}, ['Ingles'])
-                    ]))
+                    });
                 }
-            } 
-            putGuiaIdiomasContent(undefined);
+            )
             
 
-            const urlPOSTGuia = '';
+            const urlPOSTGuia = 'http://localhost:5000/GuiaRegister';
             cardElement.addEventListener ('submit', (event)=>{
                 /*CONSUME api*/ 
                 event.preventDefault();
@@ -447,17 +436,31 @@ export default function AdminViewsController(){
 
                 if (dataParse.length > 3) {
                     const idiomas = dataParse.splice(3, dataParse.length);
-                    console.log({
-                        data:{
-                            nombre: dataParse[0],
-                            apellido: dataParse[1],
-                            dni: dataParse[2],
+                    const data = {
+                        "dni": dataParse[2],
+                        "nombre": dataParse[0],
+                        "apellido": dataParse[1],
+                        "IdIdioma": idiomas[0]
+                    }
 
-                            idioma: [...idiomas]
-                        }
+                    console.log(JSON.stringify(data))
+
+                    consumeAPI(urlPOSTGuia, 
+                    {
+                        method: 'POST', 
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
                     })
+                    .then(res => {
+                        renderGuias();
+                        alert('Se registro correctamente')
+                    }).catch(err => alert('Error al registrar el idioma'))
+                        
+                
                 }else{
-                    alert('Need idioma!');
+                    alert('El guia necesita un idioma!');
                 }
     
 
