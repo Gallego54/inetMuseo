@@ -33,8 +33,8 @@ export default function GuestViewsController(){
                 Generator.makeElement('li', {id: 'visitadigital', class: 'nav-bar_element'}, [
                     Generator.makeElement('a', {href:"#visitadigital"}, 'VISITA DIGITAL')
                 ]),
-                Generator.makeElement('li', {id: 'mapasinstalacion', class: 'nav-bar_element'}, [
-                    Generator.makeElement('a', {href:"#mapasinstalacion"}, 'MAPA DE LAS INSTALACIONES')
+                Generator.makeElement('li', {id: 'accesibilidad', class: 'nav-bar_element'}, [
+                    Generator.makeElement('a', {href:"#accesibilidad"}, 'ACCESIBILIDAD')
                 ]),
                 Generator.makeElement('li', {id: 'access', class: 'nav-bar_element'}, [
                     Generator.makeElement('a', {href:"#user"}, 'ACCEDER')
@@ -58,7 +58,7 @@ export default function GuestViewsController(){
         
 
         Generator.removeAllElements(Generator.getRoot());
-        Manager.setActiveClass(['home','reserva','visitadigital','access'], 'home');
+        Manager.setActiveClass(['home','reserva','visitadigital','access', 'accesibilidad'], 'home');
         
 
         Generator.getRoot()
@@ -67,7 +67,7 @@ export default function GuestViewsController(){
         Generator.getRoot()
         .appendChild(Generator.makeElement('article', {id: 'article-index', class: 'article'}, [
             Generator.makeElement('section', {class: 'first-section-content'}, [
-                Generator.makeElement('h1', {}, ['Bienvenidx, visitantx!']),
+                Generator.makeElement('h1', {class: 'display-5'}, ['Bienvenidx, visitantx!']),
             ]), 
             Generator.makeElement('section', {id: 'home', class: 'section-content'}, 
                 [`Lorem ipsum, dolor sit amet consectetur adipisicing elit. Tempore in maiores maxime eum, dolorum rem! Dolorum eveniet excepturi doloribus quibusdam! Eum ipsum maxime repudiandae ut saepe ea nam sed ipsa.
@@ -99,14 +99,14 @@ export default function GuestViewsController(){
     
 
 
-        Manager.setActiveClass(['home','reserva','visitadigital','access'], 'access');
+        Manager.setActiveClass(['home','reserva','visitadigital', 'accesibilidad','access'], 'access');
         
     
     
         Generator.getRoot()
         .appendChild(Generator.makeElement("form", { id:'id-form', class: 'form-container-user', action: "", method: 'POST'}, [
             Generator.makeElement("input", {placeholder: 'Nombre...', id:'user', name: 'username', class: "form-text-user", type: "text"}),
-            Generator.makeElement("input", {placeholder: 'Contraseña...', id:'pass', name: 'password', class: "form-text-user", type: "password"}),
+            Generator.makeElement("input", {placeholder: 'Contraseña...', id:'pass', name: 'password', class: "form-pass-user", type: "password"}),
             Generator.makeElement("input", {value: 'INGRESAR', class: "form-submit-user", type: "submit"})
         ]))
     
@@ -124,15 +124,7 @@ export default function GuestViewsController(){
                     MR.startUp();
                 }
             });
-            /*
-                {
-                    "username":"pio",    
-                    "password":"1233"
-                    
-                }
-            */ 
-
-         
+  
     
             /*Use Middleware*/ 
         })
@@ -147,7 +139,7 @@ export default function GuestViewsController(){
     
 
     const renderReserva = () => {
-        Manager.setActiveClass(['home','reserva','visitadigital','access'], 'reserva');
+        Manager.setActiveClass(['home','reserva','visitadigital', 'accesibilidad','access'], 'reserva');
         
 
         Generator.removeAllElements(Generator.getRoot());
@@ -225,11 +217,13 @@ export default function GuestViewsController(){
         Manager.setActiveClass(['home','reserva','visitadigital','access'], 'visitadigital');
         
 
+        /**/ 
+
         Generator.removeAllElements(Generator.getRoot());
         const root = Generator.makeElement('article', {class: 'article'},
         [
             Generator.makeElement('section', {class: 'small-container'}, [
-                Generator.makeElement('div', {},[
+                Generator.makeElement('div', { class: 'content-card'},[
                     Generator.makeElement('h1', {class: 'title-content'}, ['La Gioconda']),
                     Generator.makeElement('p', {class: 'content'}, ['El retrato de Lisa Gherardini, esposa de Francesco del Giocondo, ​ más conocido como La Gioconda o Monna Lisa, es una obra pictórica del polímata renacentista italiano Leonardo da Vinci.'])
                 ]),
@@ -240,30 +234,30 @@ export default function GuestViewsController(){
 
             Generator.makeElement('section', {class: 'small-container'}, [
                 Generator.makeElement('div', {}, [
-                    Generator.makeElement('img', {class: 'img-visita-digital-2'}),
+                    Generator.makeElement('div', {class: 'img-visita-digital-2'}),
                 ]),
 
-                Generator.makeElement('div', {}, [
+                Generator.makeElement('div', {class: 'content-card'}, [
                     Generator.makeElement('h1',  {class: 'title-content'}, ['La noche estrellada']),
                     Generator.makeElement('p', {class: 'content'}, ['La noche estrellada es un óleo sobre lienzo del pintor postimpresionista neerlandés Vincent van Gogh. Pintado en junio de 1889, representa la vista desde la ventana orientada al este de su habitación de asilo en Saint-Rémy-de-Provence, justo antes del amanecer, con la adición de un pueblo imaginario.​​​'])
                 ])
             ]),
 
             Generator.makeElement('section', {class: 'small-container'}, [
-                Generator.makeElement('div', {}, [
+                Generator.makeElement('div', {class: 'content-card'}, [
                     Generator.makeElement('h1', {class: 'title-content'}, ['La última cena']),
                     Generator.makeElement('p', {class: 'content'}, ['La última cena es una pintura mural original de Leonardo da Vinci ejecutada entre 1495 y 1498.​​ Se encuentra en la pared sobre la que se pintó originalmente, en el refectorio del convento dominico de Santa Maria delle Grazie, en Milán, ​ declarado Patrimonio de la Humanidad por la Unesco en 1980.'])
                 ]),
                 Generator.makeElement('div', {}, [
-                    Generator.makeElement('img', {class: 'img-visita-digital-3'}),
+                    Generator.makeElement('div', {class: 'img-visita-digital-3'}),
                 ])
             ]),
 
             Generator.makeElement('section', {class: 'small-container'}, [
                 Generator.makeElement('div', {}, [
-                    Generator.makeElement('img', {class: 'img-visita-digital-4'}),
+                    Generator.makeElement('div', {class: 'img-visita-digital-4'}),
                 ]),
-                Generator.makeElement('div', {}, [
+                Generator.makeElement('div', {class: 'content-card'}, [
                     Generator.makeElement('h1', {class: 'title-content'}, ['Desnudo bajando una escalera nº2']),
                     Generator.makeElement('p', {class: 'content'}, ['Desnudo bajando una escalera nº2 es una pintura de 1912 por Marcel Duchamp. El trabajo es considerado como un clásico modernista y se ha convertido en uno de los más famosos de su tiempo.'])
                 ]),
@@ -274,12 +268,59 @@ export default function GuestViewsController(){
         Generator.getRoot().appendChild(root);
     }
 
+    const renderAccesibility = () => {
+        Generator.removeAllElements(Generator.getRoot());
+        Manager.setActiveClass(['home','reserva','visitadigital','access', 'accesibilidad'], 'accesibilidad');
+
+        Generator.getRoot()
+        .appendChild(
+            Generator.makeElement('article', {class: 'article'}, [
+                Generator.makeElement('section', {class: 'section-content'}, [
+                    Generator.makeElement('h1', {class: 'display-5'}, ['Accesibilidad en Museos'])
+                ]),
+
+                Generator.makeElement('section', {class: 'section-content'}, [
+                    Generator.makeElement('p', {class:'content'}, 
+                    ['La Guía de Accesibilidad en Museos permite evaluar y proyectar la accesibilidad en distintos tipos de instituciones patrimoniales y culturales, mediante la presentación de herramientas de acceso tecnologicas.'])
+                ]),
+
+
+                Generator.makeElement('div', {class: 'container'}, [
+
+                    Generator.makeElement('div', {class: 'col'}, [
+                        Generator.makeElement('h2', {class: 'title-content'}, ['Discapacidad Visual']),
+                        Generator.makeElement('div', {class: 'icon-blind'}),
+                        Generator.makeElement('p', {class:'top-content'}, ['Los problemas de visión son los más comunes en personas adultas. Problemas tales como, vista corta (miopía), hipermetropía, astigmatismo y presbicia e incluso la ceguera completa pueden llegar a aparecer.  Estos problemas provocan dificultad para disfrutar las muestras de los museos.'])
+                    ]),
+
+                    Generator.makeElement('div', {class: 'col'}, [
+                        
+                    ]),
+                ]),
+
+
+                Generator.makeElement('div', {class: 'container'}, [
+                    Generator.makeElement('div', {class: 'col'}, [
+                        Generator.makeElement('h2', {class: 'title-content'}, ['Discapacidad Motriz']),
+                        Generator.makeElement('div', {class: 'icon-chair'}),
+                        Generator.makeElement('p', {class: 'top-content'}, ['Completar lucas palavecino'])
+                    ]),
+
+                    Generator.makeElement('div', {class: 'col'}, [
+                      
+                    ]),
+                ])
+            ])
+        )
+    }
+
     const getDependencies = ()=>{
         const dependenciesIdNav = {
             'home': renderHome,
             'access': renderLoggin, 
             'reserva': renderReserva,
-            'visitadigital': renderDigitalVisit
+            'visitadigital': renderDigitalVisit,
+            'accesibilidad': renderAccesibility
         }
 
         return dependenciesIdNav;

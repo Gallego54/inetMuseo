@@ -193,11 +193,10 @@ body{
 }
 
 
-
 .container{
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: 300px;
+    grid-template-rows: auto;
     grid-column-gap: 40px;
     
     height: auto;
@@ -208,7 +207,6 @@ body{
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: 300px;
     grid-column-gap: 40px;
-    
     height: 330px;
     margin: 10px 5%;
 }
@@ -220,15 +218,32 @@ body{
     width: 100vw;
 }
 
+.top-content {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
 
 .img__mapmuseo{
     border: 1px solid black;
     box-shadow: 1px 1px 4px black;
+    height: 400px;
 }
 
 article{
-    margin: 0 20px;
+    margin: 0 100px;
     font-family: 'Source Sans Pro', sans-serif;
+}
+
+.display-5{
+    font-size: 32px;
+}
+
+
+.content-card{
+    background-color: rgb(255, 255, 255);
+    padding: 10px;
+    box-shadow: 1px 1px 3px black;
 }
 
 .img-visita-digital-1{
@@ -239,6 +254,7 @@ article{
     background-repeat: no-repeat;
     border: none;
     background-position: left;
+
 }
 
 .img-visita-digital-2{
@@ -302,54 +318,93 @@ article{
 
 
 .form-container-user{
-    border: 1px solid var(--navbar-color);
-    box-shadow: 1px 1px 5px var(--navbar-color);
-    background-image: var(--img-background);
-    background-color: rgb(82, 0, 0);
+    padding-top: 10vh;
+    background-color: var(--active-color);
+    box-shadow: 1px 1px 10px var(--hover-color);
+    border-radius: 4px; 
     margin: 100px auto;
-    width: 50vw;
-    height: 400px;   
-    filter: brightness(90%);
+    width: 30vw;
+    height: 50vh;   
 }
+.form-container-user::before{
+    content: 'Crendenciales';
+    font-size: 24px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    position: relative;
+    top: -20px;
+    left: 50%;
+}
+
 
 .form-text-user{
     display: block;
-    margin-top: 10%;
     margin-left: auto;
     margin-right: auto;
-    margin-bottom: 10px;
+
 
     width: 70%;
-    height: 10%;
-    font-size: 24px;
+    font-size: 15px;
 }
+
+.form-pass-user{
+    margin-top: 10px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+
+
+    width: 70%;
+    font-size: 15px;
+}
+
 
 .form-submit-user{
-    width: 100px;
-    height: 100px;
-    margin-top: 50px;
-    margin-left: 10%;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 110%;
-    color: var(--active-color);
-    background-image: var(--img-monalisa);
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
+    display: block;
+    background-color: var(--navbar-color);
+    border-radius: 0px;
     border: none;
-    transition: all 1s;
-    
+    color: rgb(255, 255, 255);
+    margin: 100px auto;
+    width: 100px;
+    height: 22px;
+    transition: width .5s;
 }
+
+
 
 .form-submit-user:hover{
-    width: 110px;
-    height: 110px;
     cursor: pointer;
-    filter: brightness(150%);
-    filter: blur(1px);
+    width: 150px;
+
 }
 
 
+.col{
+    position: relative;
+    margin-top: 10px;
+}
 
 
+.icon-blind{
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    background-repeat: no-repeat;
+    background-image: url('../img/icons/blind_FILL0_wght400_GRAD0_opsz48.png');
+    position: absolute;
+    top: 0px;
+    left: 250px;
+}
 
+
+.icon-chair{
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    background-repeat: no-repeat;
+    background-image: url('../img/icons/accessible_FILL0_wght400_GRAD0_opsz48.png');
+    position: absolute;
+    top: 0px;
+    left: 230px;
+}
 
