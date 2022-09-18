@@ -218,9 +218,18 @@ body{
 .footer-default{
     margin-top: 50px;
     background-color: var(--footer-color);
-    height: 100px;
+    color: var(--hover-color);
+    text-align: center;
+    height: 100px;  
+    padding-top: 50px;
+    vertical-align: middle;
     width: 100vw;
+    font-size: 12px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    position:absolute;
+    bottom:-20%;
 }
+
 
 .top-content {
     display: inline-block;
@@ -232,6 +241,12 @@ body{
     border: 1px solid black;
     box-shadow: 1px 1px 4px black;
     height: 400px;
+    margin-bottom: 100px;
+    z-index: 1000;
+}
+
+.img__mapmuseo:hover{
+    cursor: grab;
 }
 
 article{

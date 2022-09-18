@@ -1,9 +1,9 @@
 import consumeAPI from "../services/api.service";
 
-const API_URL = 'http://localhost:5000/confirmarUsuarioAdmin';
+const apiSession = '/confirmarUsuarioAdmin';
 
 export function createSession(data){
-    return new Promise ((res, rej) =>  { consumeAPI(API_URL, {
+    return new Promise ((res, rej) =>  { consumeAPI(apiSession, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -12,9 +12,9 @@ export function createSession(data){
         }).then((token) => {
             if (token) {
                 localStorage.setItem('sessionId', JSON.stringify(token[0]));
-                res(true);
+                res({success: 'Se registro correctamente...'});
             } else {
-                rej(false)
+                rej({error: 'No se pudo registrar...'})
             }
         })
     });   

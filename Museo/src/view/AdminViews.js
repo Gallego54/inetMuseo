@@ -1,10 +1,19 @@
 import checkSession from '../middleware/checkUser';
 import consumeAPI from '../services/api.service';
-import MuseoRender, {ElementGenerator, ElementManagement} from '../services/render.service.js'
+import MuseoRender, {ElementGenerator, ElementManagement, TemplateProvider} from '../services/render.service.js'
 import { deleteSession } from '../controller/Session';
+
+
+
+
+import { sendForm } from '../controller/Form';
+
+
+
 
 const Generator = new ElementGenerator();
 const Manager = new ElementManagement();
+const Template = new TemplateProvider();
 const MREnder = new MuseoRender();
 
 
@@ -51,6 +60,9 @@ export default function AdminViewsController(){
                     Generator.makeElement('li', {id: 'guias', class: 'nav-bar_element'}, [
                         Generator.makeElement('a', { href:"#guias"}, 'MANEJAR GUIAS')
                     ]),
+                    Generator.makeElement('li', {id: 'salas', class: 'nav-bar_element'}, [
+                        Generator.makeElement('a', { href:"#salas"}, 'MANEJAR SALAS')
+                    ]),
                     Generator.makeElement('li', {id: 'access', class: 'nav-bar_element'}, [
                         Generator.makeElement('a', {href:"#user"}, 'SALIR')
                     ])
@@ -74,7 +86,7 @@ export default function AdminViewsController(){
             Generator.getRoot() 
             .appendChild(Generator.makeElement('article', {class: 'article', id: 'article'}, [
                 Generator.makeElement('h1', {class: 'display-5'}, ['Bienvenido denuevo!']),
-                Generator.makeElement('p', {}, ['Recuerde que puede administrar los datos de las Visitas Guiadas, comoa de los Guias. No olvide revisar los dni de los visitantes'])
+                Generator.makeElement('p', {}, ['Recuerde que puede administrar los datos de las Visitas Guiadas, como de los Guias. No olvide revisar los dni de los visitantes'])
             ]));
 
             Manager.setActiveClass(Object.keys(getDependencies()), 'home')
@@ -99,57 +111,60 @@ export default function AdminViewsController(){
                 Generator.makeElement('div', {id: 'row-2', class: 'row'})
             ]));
         
-            document.getElementById('row-1')
-            .appendChild(
-                Generator.makeElement('table', {class: 'table-date'}, [
-                Generator.makeElement('tr', {}, [
-                    Generator.makeElement('td', {}, ['FECHA']),
-                    Generator.makeElement('td', {}, ['HORA']),
-                    Generator.makeElement('td', {}, ['GUIA']),
-                    Generator.makeElement('td', {}, ['IDIOMAS']),
-                    Generator.makeElement('td', {}, ['OPCIONES']),
-                ]), 
-                Generator.makeElement('tr', {id: 'content-table'})
-            ]))
-    
-            const APIURL = '';
-            const focus = document.getElementById('content-table');
-            consumeAPI(APIURL, {}).then( data => {
-  
-                data.map(e => {
-                    focus.appendChild(
-                        Generator.makeElement('tr', {}, [
-                            Generator.makeElement('td', {}, [e.fecha]),
-                            Generator.makeElement('td', {}, [e.hora]),
-                            Generator.makeElement('td', {}, [e.guia]),
-                            Generator.makeElement('td', {}, [e.idiomas]),
-                            Generator.makeElement('td', {}, [
-                                Generator.makeElement('div', {class: 'dashboard-container'}, [
-                                    Generator.makeElement('button', {id: 'put-table-button', class: 'put-button'}, ['Editar']),
-                                    Generator.makeElement('button', {id: 'delete-table-button', class: 'delete-button'}, ['Eliminar'])
-                                ])
-                            ])
-                        ])
-                    )
+
+            const TableContainer =  
+            Template.ContainerRecordList(['FECHA', 'HORA', 'IDIOMAS', 'OPCIONES'])
+            document.getElementById('row-1').appendChild(TableContainer)
+
+            const listPath = '/';
+            const TableContent = Template.ContentRecordList({apiUrl: listPath, method: 'GET'},{
+                primaryKey: 'id', 
+                keys: ['fecha', 'hora', 'guia', 'idiomas']
+            },
+            [  Generator.makeElement('button', {id: 'put-table-button', class: 'put-button'}, ['Editar']),
+            Generator.makeElement('button', {id: 'delete-table-button', class: 'delete-button'}, ['Eliminar'])]);
+
+            TableContent.then(content => {
+                document.getElementById(TableContainer).appendChild(content)
+            
+                const allEditButtons =  document.querySelectorAll("#put-table-button");
+                allEditButtons.forEach(button => {
+                    button.addEventListener('click', event => {
+                        console.log(event.target.value)
+                    });
                 })
-            })
     
+                const allDeleteButtons =  document.querySelectorAll("#delete-table-button");
+                allDeleteButtons.forEach (button => {
+                    button.addEventListener('click', event => {
+                        console.log(event.target.value)
+                    })
+                });
+            })
+
+
             document.getElementById('row-1')
             .appendChild(Generator.makeElement('div', {class: 'dashboard-container'}, [
                 Generator.makeElement('button', {id: 'add-table-button', class: 'form-submit-xl'}, ['Agregar'])
             ]))
 
-            let buttonClose;
             let selectGuia;
-            const cardElement = Generator.makeElement('form', { method: 'POST', class: 'content-card', action: '' }, [
-                Generator.makeElement("h1", {id:'card-header', class: "card-header"}, ['Generar Visita']),
-                buttonClose = Generator.makeElement("button", {id:'card-closer', class: "card-close"}, ['Cerrar']),
-                Generator.makeElement("input", {id:'card-fecha', name: 'fecha', type: "datetime-local", class: 'form-date' }),
-                selectGuia = Generator.makeElement("select", {id:'card-guia', name: 'guia', class: "form-select"}, ['Guia']),
-                Generator.makeElement("input", {id:'card-submit', name: 'submit', class: "form-submit", type: "submit"}),
-            ])
+            const cardElement = Template.SubmitCard(
+                'row-2', 'Generar Exposición',
+                [
+                    Generator.makeElement("input", {id:'card-fecha', name: 'fecha', type: "datetime-local", class: 'form-date' }),
+                    selectGuia = Generator.makeElement("select", {id:'card-guia', name: 'guia', class: "form-select"}, ['Guia']),
+                ]
+            );
 
-            const urlGuiaContent = '';
+
+            Manager.listenerAdder('add-table-button', 'click', (e)=>{
+                document.getElementById('row-2')
+                .appendChild(cardElement)
+            })
+
+
+            
             /*consumeAPI()*/
             const putGuiaContent = (x)=>{
                 if (x !== undefined && x.length > 0) {
@@ -164,17 +179,12 @@ export default function AdminViewsController(){
             putGuiaContent(undefined);
             
 
-
             Manager.listenerAdder('add-table-button', 'click', (e)=>{
                 document.getElementById('row-2')
                 .appendChild(cardElement)
             })
 
-            buttonClose.addEventListener('click', (e)=>{
-                document.getElementById('row-2')
-                .removeChild(cardElement)
-            })
-
+     
 
             const urlPOSTVisita = '';
             cardElement.addEventListener ('submit', (event)=>{
@@ -186,18 +196,21 @@ export default function AdminViewsController(){
                 const dateVisita = new Date(dataParse[0]);
                 const idGuia = dataParse[1];
 
-                console.log({
-                    data:{
-                        fecha: 
-                        `${dateVisita.getDate()}-${(dateVisita.getMonth())+1}-${dateVisita.getFullYear()}`,
-                        hora:
-                        `${("0" + dateVisita.getHours()).slice(-2)}:${("0" + dateVisita.getMinutes()).slice(-2)}`,
-                        guiaId: parseInt(idGuia)
-                    }
-                })
+                                    
+                sendForm({url: urlPOSTVisita, method:'POST' }, {
+                    fecha:`${dateVisita.getDate()}-${(dateVisita.getMonth())+1}-${dateVisita.getFullYear()}`,
+                    hora: `${("0" + dateVisita.getHours()).slice(-2)}:${("0" + dateVisita.getMinutes()).slice(-2)}`,
+                    guiaId: parseInt(idGuia)
+                }, ['', undefined]).then(msg => {
+                    renderFechas();
+                    alert(msg.success)
+                }).catch(msg => alert(msg.error))
+                        
+                        
+            })
 
                
-            })
+            
 
         }
        
@@ -222,54 +235,53 @@ export default function AdminViewsController(){
                 Generator.makeElement('div', {id: 'row-2', class: 'row'})
             ]));
         
-            document.getElementById('row-1')
-            .appendChild(
-                Generator.makeElement('table', {class: 'table-date'}, [
-                Generator.makeElement('tr', {}, [
-                    Generator.makeElement('td', {}, ['NOMBRE']),
-                    Generator.makeElement('td', {}, ['...']),
-                ]), 
-                Generator.makeElement('tr', {id: 'content-table'})
-            ]))
-    
-            const APIURL = '';
-            const focus = document.getElementById('content-table');
-            consumeAPI(APIURL, {}).then( data => {
-                data.map(e => {
-                    focus.appendChild(
-                        Generator.makeElement('tr', {}, [
-                            Generator.makeElement('td', {}, [e.nombre]),
-                            Generator.makeElement('td', {}, [e.content]),
-                            Generator.makeElement('td', {}, [e.content]),
-                            Generator.makeElement('td', {}, [e.content]),
-                            Generator.makeElement('td', {}, [
-                                Generator.makeElement('div', {class: 'dashboard-container'}, [
-                                    Generator.makeElement('button', {id: 'put-table-button', class: 'put-button'}, ['Editar']),
-                                    Generator.makeElement('button', {id: 'delete-table-button', class: 'delete-button'}, ['Eliminar'])
-                                ])
-                            ])
-                        ])
-                    )
+            const TableContainer =  
+            Template.ContainerRecordList(['Nombre', 'Descripcion'])
+            document.getElementById('row-1').appendChild(TableContainer)
+
+            const listPath = '/';
+            const TableContent = Template.ContentRecordList({apiUrl: listPath, method: 'GET'},{
+                primaryKey: 'id', 
+                keys: ['nombre', 'descripcion']
+            },
+            [  Generator.makeElement('button', {id: 'put-table-button', class: 'put-button'}, ['Editar']),
+            Generator.makeElement('button', {id: 'delete-table-button', class: 'delete-button'}, ['Eliminar'])]);
+
+            TableContent.then(content => {
+                document.getElementById(TableContainer).appendChild(content)
+            
+                const allEditButtons =  document.querySelectorAll("#put-table-button");
+                allEditButtons.forEach(button => {
+                    button.addEventListener('click', event => {
+                        console.log(event.target.value)
+                    });
                 })
+    
+                const allDeleteButtons =  document.querySelectorAll("#delete-table-button");
+                allDeleteButtons.forEach (button => {
+                    button.addEventListener('click', event => {
+                        console.log(event.target.value)
+                    })
+                });
             })
+
     
             document.getElementById('row-1')
             .appendChild(Generator.makeElement('div', {class: 'dashboard-container'}, [
                 Generator.makeElement('button', {id: 'add-table-button', class: 'form-submit-xl'}, ['Agregar'])
             ]))
 
-            let buttonClose;
-            const cardElement = Generator.makeElement('form', { method: 'POST', class: 'content-card', action: '' }, [
-                Generator.makeElement("h1", {id:'card-header', class: "card-header"}, ['Generar Exposición']),
-                buttonClose = Generator.makeElement("button", {id:'card-closer', class: "card-close"}, ['Cerrar']),
 
 
-                Generator.makeElement("input", {id:'card-nombreexpo', name: 'titulo', type: "text", placeholder: 'Nombre Exposicion...',class: 'form-text' }),
-                Generator.makeElement("input", {id:'card-contentASD', name: 'descipcion', type: "text", placeholder: 'Descripcion',class: 'form-text' }),
 
 
-                Generator.makeElement("input", {id:'card-submit', name: 'submit', class: "form-submit", type: "submit"}),
-            ]) 
+            const cardElement = Template.SubmitCard(
+                'row-2', 'Generar Exposición',
+                [
+                    Generator.makeElement("input", {id:'card-titulo', name: 'titulo', type: "text", placeholder: 'Nombre Exposicion...',class: 'form-text' }),
+                    Generator.makeElement("input", {id:'card-descipcion', name: 'descipcion', type: "text", placeholder: 'Descripcion',class: 'form-text' }),
+                ]
+            );
 
 
             Manager.listenerAdder('add-table-button', 'click', (e)=>{
@@ -277,11 +289,7 @@ export default function AdminViewsController(){
                 .appendChild(cardElement)
             })
 
-            buttonClose.addEventListener('click', (e)=>{
-                document.getElementById('row-2')
-                .removeChild(cardElement)
-            })
-
+            
 
             const urlPOSTExpo = '';
             cardElement.addEventListener ('submit', (event)=>{
@@ -290,13 +298,13 @@ export default function AdminViewsController(){
                 const data = new FormData(event.target);
                 const dataParse = [...data.values()]
 
-    
-                console.log({
-                    data:{
-                        'nombre-expo': dataParse[0]
-                    }
-                })
-
+                sendForm({url: urlPOSTExpo, method:'POST' }, {
+                    'titulo': dataParse[0],
+                    'descipcion': dataParse[1]
+                }, ['', undefined]).then(msg => {
+                    renderExposiciones();
+                    alert(msg.success);
+                }).catch(msg => alert(msg.error))
                
             })
 
@@ -322,82 +330,66 @@ export default function AdminViewsController(){
                 Generator.makeElement('div', {id: 'row-1', class: 'row'}),
                 Generator.makeElement('div', {id: 'row-2', class: 'row'})
             ]));
-        
-            document.getElementById('row-1')
-            .appendChild(
-                Generator.makeElement('table', {id: 'content-table', class: 'table-date'}, [
-                Generator.makeElement('tr', {}, [
-                    Generator.makeElement('td', {}, ['Nombre Completo']),
-                    Generator.makeElement('td', {}, ['DNI']),
-                    Generator.makeElement('td', {}, ['Idiomas']),
-                ]), 
-               
-            ]))
-            /*
-             
-            */ 
-            const APIURL = 'http://localhost:5000/ListarGuias';
-            const focus = document.getElementById('content-table');
+    
+           
+            const TableContainer =  
+            Template.ContainerRecordList(['Nombre Completo', 'DNI', 'Idiomas', 'Operaciones'])
+            document.getElementById('row-1').appendChild(TableContainer)
+
+            const listPath = '/ListarGuias';
+            const TableContent = Template.ContentRecordList({apiUrl: listPath, method: 'GET'},{
+                primaryKey: 'idGuia', 
+                keys: ['nombre', 'apellido', 'dni', 'idioma']
+            },
+            [  Generator.makeElement('button', {id: 'put-table-button', class: 'put-button'}, ['Editar']),
+            Generator.makeElement('button', {id: 'delete-table-button', class: 'delete-button'}, ['Eliminar'])]);
+
+            TableContent.then(content => {
+                document.getElementById(TableContainer).appendChild(content)
             
-            consumeAPI(APIURL, { method: 'GET' }).then( data => {
-                console.log(data)
-
-
-                data.forEach(e => {
-                    console.log(e.nombre)
-                    focus.appendChild(
-                        Generator.makeElement('tr', {id: e.idGuia}, [
-                            Generator.makeElement('td', {}, [`${e.nombre} ${e.apellido}`]),
-                            Generator.makeElement('td', {}, [e.dni]),
-                            Generator.makeElement('td', {}, [e.idioma]),
-                            Generator.makeElement('td', {}, [
-                                Generator.makeElement('div', {class: 'dashboard-container'}, [
-                                    Generator.makeElement('button', {value:e.idGuia, id: 'delete-table-button', class: 'delete-button', name: 'buton-delete'}, ['Eliminar'])
-                                ])
-                            ])
-                        ])
-                    )
+                const allEditButtons =  document.querySelectorAll("#put-table-button");
+                allEditButtons.forEach(button => {
+                    button.addEventListener('click', event => {
+                        console.log(event.target.value)
+                    });
                 })
-
-                document.getElementsByName('buton-delete').forEach(e => {
-                    const urlDelGuia = 'http://localhost:5000/cambiarEstadoGuia';
-                    e.addEventListener('click', ()=>{
-                        consumeAPI(urlDelGuia, {
-                            method: 'POST', 
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({idGuia: e.value})
-                        }).then(res =>{
+    
+                const allDeleteButtons =  document.querySelectorAll("#delete-table-button");
+                allDeleteButtons.forEach (button => {
+                    button.addEventListener('click', event => {
+                        console.log(event.target.value);
+    
+                        const urlDelGuia = '/cambiarEstadoGuia';
+                        sendForm({url: urlDelGuia, method:'POST' }, {
+                            idGuia: event.target.value
+                        }, ['', undefined]).then(msg => {
                             renderGuias();
-                            alert('Se elimino correctamente!');
-                        })
+                            alert(msg.success);
+                        }).catch(msg => alert(msg.error))
                     })
-                })
-
+                });
             })
+
+
+       
+
     
             document.getElementById('row-1')
             .appendChild(Generator.makeElement('div', {class: 'dashboard-container'}, [
                 Generator.makeElement('button', {id: 'add-table-button', class: 'form-submit-xl'}, ['Agregar'])
             ]))
 
-            let buttonClose;
+      
             let checkContainer;
-            const cardElement = Generator.makeElement('form', { method: 'POST', class: 'content-card', action: '' }, [
-                Generator.makeElement("h1", {id:'card-header', class: "card-header"}, ['Añadir Guia']),
-                buttonClose = Generator.makeElement("button", {id:'card-closer', class: "card-close"}, ['Cerrar']),
-
-
-                Generator.makeElement("input", {id:'card-nombre-guia', name: 'nombre-guia', type: "text", placeholder: 'Nombre...',class: 'form-text-inline' }),
-                Generator.makeElement("input", {id:'card-apellido-guia', name: 'apellido-guia', type: "text", placeholder: 'Apellido...',class: 'form-text-inline' }),
-                Generator.makeElement("input", {id:'card-dni-guia', name: 'dni-guia', type: "number", placeholder: 'DNI',class: 'form-text-full' }),
-                checkContainer=Generator.makeElement("div", {id:'card-idiomas-guia', name: 'idiomas-guia', class: 'container' }),
-
-
-
-                Generator.makeElement("input", {id:'card-submit', name: 'submit', class: "form-submit", type: "submit"}),
-            ]) 
+            const cardElement = Template.SubmitCard(
+                'row-2', 'Añadir Guia',
+                [
+                    Generator.makeElement("input", {id:'card-nombre-guia', name: 'nombre-guia', type: "text", placeholder: 'Nombre...',class: 'form-text-inline' }),
+                    Generator.makeElement("input", {id:'card-apellido-guia', name: 'apellido-guia', type: "text", placeholder: 'Apellido...',class: 'form-text-inline' }),
+                    Generator.makeElement("input", {id:'card-dni-guia', name: 'dni-guia', type: "number", placeholder: 'DNI',class: 'form-text-full' }),
+                    checkContainer=Generator.makeElement("div", {id:'card-idiomas-guia', name: 'idiomas-guia', class: 'container' }),
+                ]
+            );
 
 
             Manager.listenerAdder('add-table-button', 'click', (e)=>{
@@ -405,13 +397,10 @@ export default function AdminViewsController(){
                 .appendChild(cardElement)
             })
 
-            buttonClose.addEventListener('click', (e)=>{
-                document.getElementById('row-2')
-                .removeChild(cardElement)
-            })
+
 
             
-            const urlIdiomasContent = 'http://localhost:5000/listarIdioma';
+            const urlIdiomasContent = '/listarIdioma';
             consumeAPI(urlIdiomasContent, {method: 'GET'})
             .then((data) => {
                    /* console.log(data)
@@ -427,45 +416,130 @@ export default function AdminViewsController(){
             )
             
 
-            const urlPOSTGuia = 'http://localhost:5000/GuiaRegister';
+            const urlPOSTGuia = '/GuiaRegister';
+            cardElement.addEventListener ('submit', (event)=>{
+                /*CONSUME api*/ 
+                event.preventDefault();
+                const data = new FormData(event.target);
+                const dataParse = [...data.values()]
+                const idiomas = dataParse.splice(3, dataParse.length);
+
+                sendForm({url: urlPOSTGuia, method:'POST' }, {
+                    "dni": dataParse[2],
+                    "nombre": dataParse[0],
+                    "apellido": dataParse[1],
+                    "IdIdioma": idiomas[0]
+                }, ['', undefined]).then(msg => {
+                    renderGuias();
+                    alert(msg.success);
+                }).catch(msg => alert(msg.error))
+            })
+
+        }
+    }
+
+    
+    const renderSalas = () => {
+        if (preventSessionFail()) {
+            Generator.removeAllElements(Generator.getRoot());
+            Manager.setActiveClass(Object.keys(getDependencies()), 'salas')
+
+            Generator.getRoot() 
+            .appendChild(Generator.makeElement('article', {class: 'article', id: 'article-content'}));
+
+            document.getElementById('article-content')
+            .appendChild(Generator.makeElement('h1', {class: 'h1-display-table'}, ['Lista de Salas del Museo']));
+    
+
+            document.getElementById('article-content')
+            .appendChild(Generator.makeElement('div', {class: 'container'}, [
+                Generator.makeElement('div', {id: 'row-1', class: 'row'}),
+                Generator.makeElement('div', {id: 'row-2', class: 'row'})
+            ]));
+        
+            
+
+            const apiUrlSalas = '';
+
+            const TableContainer = Template.ContainerRecordList(['ID', 'NOMBRE', 'OPERACIONES']);
+            document.getElementById('row-1').appendChild(TableContainer);
+
+            const TableContent = Template.ContentRecordList({apiUrl: apiUrlSalas, method: 'POST'},  {primaryKey: 'id', keys: ['id', 'nombre']},
+            [ Generator.makeElement('button', {id: 'put-table-button', class: 'put-button'}, ['Editar']),
+            Generator.makeElement('button', {id: 'delete-table-button', class: 'delete-button'}, ['Eliminar'])]);
+            
+            TableContent.then(content => {
+                document.getElementById(TableContainer).appendChild(content)
+            
+                const allEditButtons =  document.querySelectorAll("#put-table-button");
+                allEditButtons.forEach(button => {
+                    button.addEventListener('click', event => {
+                        console.log(event.target.value)
+                    });
+                })
+    
+                const allDeleteButtons =  document.querySelectorAll("#delete-table-button");
+                allDeleteButtons.forEach (button => {
+                    button.addEventListener('click', event => {
+                        console.log(event.target.value)
+                    });
+                })
+            })
+
+
+
+            
+            const allEditButtons =  document.querySelectorAll("#put-table-button");
+            allEditButtons.forEach(button => {
+                button.addEventListener('click', event => {
+                    console.log(event.target.value)
+                });
+            })
+
+            const allDeleteButtons =  document.querySelectorAll("#delete-table-button");
+            allDeleteButtons.forEach (button => {
+                button.addEventListener('click', event => {
+                    console.log(event.target.value)
+                });
+            })
+
+            const cardElement = Template.SubmitCard(
+                'row-2', 'Agregar Sala',
+                [
+                    Generator.makeElement("input", {id:'card-titulo', name: 'titulo', type: "text", placeholder: 'Nombre de Sala...',class: 'form-text' }),
+                    Generator.makeElement("input", {id:'card-descipcion', name: 'descipcion', type: "text", placeholder: 'Descripcion de Sala...',class: 'form-text' })
+                ]
+            );
+
+            document.getElementById('row-1')
+            .appendChild(Generator.makeElement('div', {class: 'dashboard-container'}, [
+                Generator.makeElement('button', {id: 'add-table-button', class: 'form-submit-xl'}, ['Agregar'])
+            ]))
+
+            Manager.listenerAdder('add-table-button', 'click', (e)=>{
+                document.getElementById('row-2')
+                .appendChild(cardElement)
+            })
+
+
+
+
+
+            const urlPOSTSalas = '';
             cardElement.addEventListener ('submit', (event)=>{
                 /*CONSUME api*/ 
                 event.preventDefault();
                 const data = new FormData(event.target);
                 const dataParse = [...data.values()]
 
-                if (dataParse.length > 3) {
-                    const idiomas = dataParse.splice(3, dataParse.length);
-                    const data = {
-                        "dni": dataParse[2],
-                        "nombre": dataParse[0],
-                        "apellido": dataParse[1],
-                        "IdIdioma": idiomas[0]
-                    }
-
-                    console.log(JSON.stringify(data))
-
-                    consumeAPI(urlPOSTGuia, 
-                    {
-                        method: 'POST', 
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(data)
-                    })
-                    .then(res => {
-                        renderGuias();
-                        alert('Se registro correctamente')
-                    }).catch(err => alert('Error al registrar el idioma'))
-                        
                 
-                }else{
-                    alert('El guia necesita un idioma!');
-                }
-    
-
-
-               
+                sendForm({url: urlPOSTSalas, method:'POST' }, {
+                    'nombre-expo': dataParse[0],
+                    'descripcion-expo': dataParse[1]
+                }, ['', undefined]).then(msg => {
+                    renderSalas();
+                    alert(msg.success);
+                }).catch(msg => alert(msg.error))
             })
 
         }
@@ -485,6 +559,7 @@ export default function AdminViewsController(){
             'fecha': renderFechas, 
             'exposiciones': renderExposiciones,
             'guias': renderGuias,
+            'salas': renderSalas,
             'access': logOut
         }
 

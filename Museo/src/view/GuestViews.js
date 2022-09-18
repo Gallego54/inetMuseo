@@ -1,8 +1,12 @@
-import consumeAPI from '../services/api.service.js';
-import MuseoRender, {ElementGenerator, ElementManagement} from '../services/render.service.js'
+import MuseoRender, {ElementGenerator, ElementManagement, TemplateProvider} from '../services/render.service.js'
 import { createSession } from '../controller/Session.js'
 
 
+import { sendForm } from '../controller/Form.js';
+
+
+
+const Template = new TemplateProvider();
 const Generator = new ElementGenerator();
 const Manager = new ElementManagement();
 
@@ -55,7 +59,9 @@ export default function GuestViewsController(){
 
     const renderHome = () => {
         renderNav(getDependencies());   
-        
+
+  
+
 
         Generator.removeAllElements(Generator.getRoot());
         Manager.setActiveClass(Object.keys(getDependencies()), 'home');
@@ -93,7 +99,7 @@ export default function GuestViewsController(){
             ]),
         ]));
 
-        Generator.getRoot().appendChild(Generator.makeElement('footer', {class: 'footer-default'}))
+        Generator.getRoot().appendChild(Generator.makeElement('footer', {class: 'footer-default'}, ['Un proyecto para el INET 2022']))
     }
 
     const renderLoggin = () => {
@@ -120,12 +126,12 @@ export default function GuestViewsController(){
                 password: document.getElementById('pass').value,
             }
 
-            createSession(body).then(x => {
-                if (x) {
-                    const MR = new MuseoRender();
-                    MR.startUp();
-                }
-            });
+            createSession(body).then(message=> {
+                const MR = new MuseoRender();
+                MR.startUp();
+                alert(message.success);
+                
+            }).catch(message => alert(message.error))
   
     
             /*Use Middleware*/ 
@@ -161,58 +167,72 @@ export default function GuestViewsController(){
             Generator.makeElement('div', {id: 'row-2', class: 'row'})
         ]));
 
-        document.getElementById('row-1')
-        .appendChild(
-            Generator.makeElement('table', {class: 'table-date', id: 'content-table'}, [
-            Generator.makeElement('tr', {}, [
-                Generator.makeElement('td', {}, ['FECHA']),
-                Generator.makeElement('td', {}, ['HORA']),
-                Generator.makeElement('td', {}, ['GUIA']),
-                Generator.makeElement('td', {}, ['IDIOMAS']),
-                Generator.makeElement('td', {}, ['SUBSCRIBIRME']),
-            ]), 
-        ]))
+        const TableContainer =  
+        Template.ContainerRecordList(['FECHA', 'HORA', 'IDIOMAS', 'GUIA', 'IDIOMAS', 'SUBSCRIBIRME'])
+        document.getElementById('row-1').appendChild(TableContainer)
 
+        const urlVisitaGuiada ='/VisitaGuiadaView';
+        const TableContent = Template.ContentRecordList({apiUrl: urlVisitaGuiada, method: 'GET'},{
+            primaryKey: 'id', 
+            keys: ['fecha', 'hora', 'idioma', 'nombre', 'apellido']
+        },
+        [  Generator.makeElement('button', { id: 'pop-table-button', class: 'form-submit-xl'}, ['Subscribirme'])  ]);
 
-        const urlVisitaGuiada ='http://localhost:5000/VisitaGuiadaView';
-        const focus = document.getElementById('content-table');
-        consumeAPI(urlVisitaGuiada, {method: 'POST'}).then( data => {
-            data.forEach(e => {
-                console.log(data)
-                focus.appendChild(
-                    Generator.makeElement('tr', {}, [
-                        Generator.makeElement('td', {}, [e.fecha]),
-                        Generator.makeElement('td', {}, [e.hora]),
-                        Generator.makeElement('td', {}, [`${e.nombre} ${e.apellido}`]),
-                        Generator.makeElement('td', {}, [e.idioma]),
-                        Generator.makeElement('td', {}, [
-                            Generator.makeElement('div', {class: 'dashboard-container'}, [
-                                Generator.makeElement('button', {/*value: e.id,*/ id: 'pop-table-button', class: 'post-button'}, ['Subscribirme']),
-                            ])
-                        ])
-                    ])
-                )
-            });
-        })      
- 
-
-        document.querySelectorAll('#pop-table-button').forEach(item => {
-            item.addEventListener('click', event => {
-              //handle click
-                console.log(event)
-                const row2Element = document.getElementById('row-2');
-                Generator.removeAllElements(row2Element);
+        TableContent.then(content => {
+            document.getElementById(TableContainer).appendChild(content)
         
-                row2Element
-                .appendChild(Generator.makeElement('form', { method: 'POST', class: 'card', action: '' }, [
-                    Generator.makeElement("h1", {id:'card-header', class: "card-header"}, ['Datos de Inscripcion']),
-                    Generator.makeElement("input", {id:'card-nombre', name: 'nombre', class: "form-text", type: "text"}),
-                    Generator.makeElement("input", {id:'card-apellido', name: 'apellido', class: "form-text", type: "text"}),
-                    Generator.makeElement("input", {id:'card-dni', name: 'dni', class: "form-number", type: "number"}),
-                    Generator.makeElement("input", {id:'card-submit', name: 'submit', class: "form-text", type: "submit"}),
-                ]))
+            const allSubscribeButtons =  document.querySelectorAll("pop-table-button");
+            allSubscribeButtons.forEach(button => {
+                button.addEventListener('click', event => {
+                    console.log(event.target.value)
+                    Generator.removeAllElements('row-2');
+
+                    const cardElement = Template.SubmitCard(
+                        'row-2', 'Subscribirse a Visita Guiada',
+                        [
+                            Generator.makeElement("input", {id:'card-nombre', name: 'nombre', placeholder: 'Nombre...', class: "form-text-inline", type: "text"}),
+                            Generator.makeElement("input", {id:'card-apellido', name: 'apellido', placeholder: 'Apellido...', class: "form-text-inline", type: "text"}),
+                            Generator.makeElement("input", {id:'card-dni', name: 'dni', placeholder: 'DNI',  class: "form-text-full", type: "number"}),
+                        ]
+                    );
+        
+                    document.getElementById('row-2').appendChild(cardElement)
+        
+                        
+                    cardElement.addEventListener('submit', event => {
+                        event.preventDefault();
+                        const data = new FormData(event.target);
+                        const dataParse = [...data.values()]
+        
+                        /*
+                            const validate = new validationService(['', undefined]);
+                            sendForm('url', {data: 123}, validate)
+                        
+                        */ 
+                        const urlPOSTVisita ='/postvisita';
+                        sendForm({url: urlPOSTVisita, method:'POST' }, {
+                            idVisita: event.target.value,
+                            nombre: dataParse[0],
+                            apellido: dataParse[1],
+                            dni: dataParse[2]
+                        }, ['', undefined]).then(msg => {
+                            renderReserva();
+                            alert(msg.success)
+                        }).catch(msg => alert(msg.error))
+
+                        console.log(
+                            {
+                                idVisita: event.target.value,
+                                nombre: dataParse[0],
+                                apellido: dataParse[1],
+                                dni: dataParse[2]
+                            }
+                        )
+                    })
+
+                });
             })
-        })     
+        })
 
     }
 
@@ -331,10 +351,7 @@ export default function GuestViewsController(){
 
     return {
         startUp: function () {
-
-        
             renderHome();
-
         }
     }
 
