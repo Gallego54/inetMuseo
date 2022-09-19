@@ -1,7 +1,7 @@
 /*To fetch*/
 
 // API CONSUME //
-const API_URL = 'http://localhost:5000';
+const API_URL = 'http://127.0.0.1:5000';
 export default function consumeAPI (urlPath, params) {
     return new Promise ((res, rej) => {
         window.fetch(API_URL+urlPath, params)
@@ -9,4 +9,4 @@ export default function consumeAPI (urlPath, params) {
             .then(json => res(json))   
             .catch(err => rej(err));
     });   
-}
+}   

@@ -197,6 +197,8 @@ body{
 }
 
 
+
+
 .container{
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -205,6 +207,7 @@ body{
     
     height: auto;
 }
+
 
 .small-container{
     display: grid;
@@ -299,7 +302,38 @@ article{
 
 }
 
+.card-close:hover{
+    cursor: pointer;
+}
+
+.put-button{
+    border: none;
+    border-radius: none;
+    background-color: rgb(184, 107, 0);
+    display: inline-block;
+    margin: 2px;
+    color: var(--active-color);
+}
+ 
+.put-button:hover{
+    cursor: pointer;
+}
+
+.delete-button:hover{
+    cursor: pointer;
+}
+
+.delete-button{
+    border: none;
+    border-radius: none;
+    background-color: rgb(147, 0, 0);
+    display: inline-block;
+    margin: 2px;
+    color: var(--active-color);
+}
+
 .content-card{
+    margin-top: 10px;
     position: relative;
     background-color: rgb(255, 255, 255);
     padding: 10px;
@@ -313,6 +347,9 @@ article{
     margin-left: auto ;
     color: var(--active-color);
 }
+.form-submit:hover{
+    cursor: pointer;
+}
 
 .form-submit-xl{
     display: block;
@@ -322,6 +359,26 @@ article{
     height: 20px;
     margin: 10px 10px;
     color: var(--active-color);
+}
+.form-submit-xl:hover{
+    cursor: pointer;
+}
+
+.form-edit-xl{
+    display: block;
+    border: none;
+    background-color: var(--navbar-color);
+    width: 160px;
+    height: 20px;
+    margin: 10px 10px;
+    color: var(--active-color);
+    position: absolute;
+    top: 90%;
+    left: 70%;
+}
+
+.form-edit-xl:hover{
+    cursor: pointer;
 }
 
 .img-visita-digital-1{

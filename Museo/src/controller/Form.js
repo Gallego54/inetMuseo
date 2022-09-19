@@ -6,6 +6,7 @@ export function sendForm ( {url, method}, data, conditionsArray ) {
     return new Promise((res, rej)=>{
         const validationInstance = new validationService(conditionsArray);
         if (validationInstance.validateData(data)) {
+            //console.log({'body': JSON.stringify(data)})
             consumeAPI(url, 
                 {   'method': method, 
                     'headers': {

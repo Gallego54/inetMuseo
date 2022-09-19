@@ -10,13 +10,13 @@ export function createSession(data){
             },
             body: JSON.stringify(data)
         }).then((token) => {
-            if (token) {
+            if (token.length >= 1) {
                 localStorage.setItem('sessionId', JSON.stringify(token[0]));
                 res({success: 'Se registro correctamente...'});
             } else {
                 rej({error: 'No se pudo registrar...'})
             }
-        })
+        }).catch(_ => rej({error: 'No se pudo registrar...'}))
     });   
 }
 

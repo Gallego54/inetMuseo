@@ -82,14 +82,65 @@ export default function AdminViewsController(){
         if (preventSessionFail()) {
             Generator.removeAllElements(Generator.getRoot());
             renderNav(getDependencies());
-            
+            Manager.setActiveClass(Object.keys(getDependencies()), 'home')
+
             Generator.getRoot() 
             .appendChild(Generator.makeElement('article', {class: 'article', id: 'article'}, [
                 Generator.makeElement('h1', {class: 'display-5'}, ['Bienvenido denuevo!']),
-                Generator.makeElement('p', {}, ['Recuerde que puede administrar los datos de las Visitas Guiadas, como de los Guias. No olvide revisar los dni de los visitantes'])
+                Generator.makeElement('p', {}, ['Recuerde que puede administrar los datos de las Visitas Guiadas, como de los Guias. No olvide revisar los dni de los visitantes.'])
             ]));
 
-            Manager.setActiveClass(Object.keys(getDependencies()), 'home')
+            Generator.getRoot().appendChild(Generator.makeElement('article', {class: 'article', id: 'article-content'}))
+            document.getElementById('article-content').appendChild(Generator.makeElement('h2', {class: 'display-3'}, ['Listado de Inscriptos']))
+
+            document.getElementById('article-content')
+            .appendChild(Generator.makeElement('div', {class: 'container'}, [
+                Generator.makeElement('div', {id: 'row-1', class: 'row'}),
+                Generator.makeElement('div', {id: 'row-2', class: 'row'})
+            ]));
+
+            const TableContainer =  
+            Template.ContainerRecordList(['Inscripcion', 'Fecha', 'Hora', 'DNI', 'Personas'])
+            document.getElementById('row-1').appendChild(TableContainer)
+
+            const listPath = '/InscripcionView';
+            const TableContent = Template.ContentRecordList({apiUrl: listPath, method: 'GET'},{
+                primaryKey: 'idInscripcion', 
+                keys: ['fechaInscripcion', 'fecha', 'hora', 'dni', 'cantPersonas']
+            },
+            [  /*   Generator.makeElement('button', {id: 'put-table-button', class: 'put-button'}, ['Editar']),
+                    Generator.makeElement('button', {id: 'delete-table-button', class: 'delete-button'}, ['Eliminar'])*/
+            ]);
+
+            TableContent.then(content => {
+                TableContainer.appendChild(content)
+            
+                const allEditButtons =  document.querySelectorAll("#put-table-button");
+                allEditButtons.forEach(button => {
+                    button.addEventListener('click', event => {
+                        console.log(event.target.value)
+                    });
+                })
+    
+                const allDeleteButtons =  document.querySelectorAll("#delete-table-button");
+                allDeleteButtons.forEach (button => {
+                    button.addEventListener('click', event => {
+                        const urlDelExp = '/cambiarEstadoInscripcion';
+                            sendForm({url: urlDelExp, method:'PATCH' }, {
+                                'idInscripcion': event.target.value
+                            }, ['', undefined]).then(msg => {
+                                renderFechas();
+                                alert(msg.success);
+                            }).catch(msg => alert(msg.error))
+                        })
+                });
+            })
+
+
+
+            const HistoryButton =  Generator.makeElement('button', {class: 'form-edit-xl'}, ['Recuperar un Registro']);
+            HistoryButton.addEventListener('click', ()=>{alert('En desarrollo...')})
+            document.getElementById('article-content').appendChild(HistoryButton);
         }
     }
 
@@ -113,80 +164,92 @@ export default function AdminViewsController(){
         
 
             const TableContainer =  
-            Template.ContainerRecordList(['FECHA', 'HORA', 'IDIOMAS', 'OPCIONES'])
+            Template.ContainerRecordList(['Fecha', 'Hora', 'Idioma', 'Apellido Guia'])
             document.getElementById('row-1').appendChild(TableContainer)
 
-            const listPath = '/';
-            const TableContent = Template.ContentRecordList({apiUrl: listPath, method: 'GET'},{
-                primaryKey: 'id', 
-                keys: ['fecha', 'hora', 'guia', 'idiomas']
+            const listPath = '/VisitaGuiadaView';
+            const TableContent = Template.ContentRecordList({apiUrl: listPath, method: 'POST'},{
+                primaryKey: 'idVisitaGuiada', 
+                keys: ['fecha', 'hora', 'idioma', 'apellido']
             },
             [  Generator.makeElement('button', {id: 'put-table-button', class: 'put-button'}, ['Editar']),
             Generator.makeElement('button', {id: 'delete-table-button', class: 'delete-button'}, ['Eliminar'])]);
 
-            TableContent.then(content => {
-                document.getElementById(TableContainer).appendChild(content)
-            
-                const allEditButtons =  document.querySelectorAll("#put-table-button");
-                allEditButtons.forEach(button => {
-                    button.addEventListener('click', event => {
-                        console.log(event.target.value)
-                    });
-                })
-    
-                const allDeleteButtons =  document.querySelectorAll("#delete-table-button");
-                allDeleteButtons.forEach (button => {
-                    button.addEventListener('click', event => {
-                        console.log(event.target.value)
-                    })
-                });
-            })
-
-
-            document.getElementById('row-1')
-            .appendChild(Generator.makeElement('div', {class: 'dashboard-container'}, [
-                Generator.makeElement('button', {id: 'add-table-button', class: 'form-submit-xl'}, ['Agregar'])
-            ]))
 
             let selectGuia;
             const cardElement = Template.SubmitCard(
-                'row-2', 'Generar Exposición',
+                'row-2', 'Generar Visita',
                 [
                     Generator.makeElement("input", {id:'card-fecha', name: 'fecha', type: "datetime-local", class: 'form-date' }),
                     selectGuia = Generator.makeElement("select", {id:'card-guia', name: 'guia', class: "form-select"}, ['Guia']),
                 ]
             );
 
-
-            Manager.listenerAdder('add-table-button', 'click', (e)=>{
-                document.getElementById('row-2')
-                .appendChild(cardElement)
-            })
-
-
-            
-            /*consumeAPI()*/
-            const putGuiaContent = (x)=>{
-                if (x !== undefined && x.length > 0) {
-                    x.map(
+            const apiUrlGuia = '/ListarGuias';
+            consumeAPI(apiUrlGuia, {method: 'GET'}).then(data =>{
+                if (data.length >= 1) {
+                    data.forEach( ele => {
                         selectGuia.appendChild(Generator.makeElement('option', 
-                        {value: `${x.idGuia}`}, [`${x.nombre} ${x.apellido} (${x.idioma})`]))
-                    )
-                } else {
-                    selectGuia.appendChild(Generator.makeElement('option', {value: '1'}, ['Dato Prueba']))
+                        {class:'', value: `${ele.idGuia}`},  [`${ele.nombre} ${ele.apellido} (${ele.idioma})`]))
+                    })
+                }else{
+                    selectGuia.appendChild(Generator.makeElement('option', 
+                        {class:'', value: ''}, [`No tiene guias`]))
                 }
-            } 
-            putGuiaContent(undefined);
+            })
+
+
+            TableContent.then(content => {
+                TableContainer.appendChild(content)
             
+                const allEditButtons =  document.querySelectorAll("#put-table-button");
+                allEditButtons.forEach(button => {
+                    button.addEventListener('click', event => {
+                        Generator.removeAllElements(document.getElementById('row-2'));
+                        const cardEditable = Template.SubmitCard(
+                            'row-2', 'Editar Visita',
+                            [
+                                Generator.makeElement("input", {id:'card-fecha', name: 'fecha', type: "datetime-local", class: 'form-date' }),
+                                selectGuia.cloneNode(true),
+                            ]
+                        );
+
+                        cardEditable.addEventListener('submit',  eventSubmit =>{
+                            eventSubmit.preventDefault();
+                            alert('En desarrollo...');
+                        })
+
+                        document.getElementById('row-2')
+                        .appendChild(cardEditable)
+                    });
+                })
+    
+                const allDeleteButtons =  document.querySelectorAll("#delete-table-button");
+                allDeleteButtons.forEach (button => {
+                    button.addEventListener('click', event => {
+                        const urlDelExp = '/cambiarEstadoVisitaGuiada';
+                            sendForm({url: urlDelExp, method:'PATCH' }, {
+                                'idVisitaGuiada': event.target.value
+                            }, ['', undefined]).then(msg => {
+                                renderFechas();
+                                alert(msg.success);
+                            }).catch(msg => alert(msg.error))
+                        })
+                });
+            })
+
+            document.getElementById('row-1')
+            .appendChild(Generator.makeElement('div', {class: 'dashboard-container'}, [
+                Generator.makeElement('button', {id: 'add-table-button', class: 'form-submit-xl'}, ['Agregar'])
+            ]))
 
             Manager.listenerAdder('add-table-button', 'click', (e)=>{
                 document.getElementById('row-2')
                 .appendChild(cardElement)
             })
-
      
 
-            const urlPOSTVisita = '';
+            const urlPOSTVisita = '/VisitaGuiadaRegister';
             cardElement.addEventListener ('submit', (event)=>{
                 /*CONSUME api*/ 
                 event.preventDefault();
@@ -198,9 +261,10 @@ export default function AdminViewsController(){
 
                                     
                 sendForm({url: urlPOSTVisita, method:'POST' }, {
-                    fecha:`${dateVisita.getDate()}-${(dateVisita.getMonth())+1}-${dateVisita.getFullYear()}`,
+                    fecha:`${dateVisita.getFullYear()}-${(dateVisita.getMonth())+1}-${dateVisita.getDate()}`,
                     hora: `${("0" + dateVisita.getHours()).slice(-2)}:${("0" + dateVisita.getMinutes()).slice(-2)}`,
-                    guiaId: parseInt(idGuia)
+                    idGuia: parseInt(idGuia),
+                    idRecorrido: 1
                 }, ['', undefined]).then(msg => {
                     renderFechas();
                     alert(msg.success)
@@ -236,34 +300,69 @@ export default function AdminViewsController(){
             ]));
         
             const TableContainer =  
-            Template.ContainerRecordList(['Nombre', 'Descripcion'])
+            Template.ContainerRecordList(['Titulo', 'Descripción', 'Sala'])
             document.getElementById('row-1').appendChild(TableContainer)
 
-            const listPath = '/';
+            const listPath = '/listarExposicion';
             const TableContent = Template.ContentRecordList({apiUrl: listPath, method: 'GET'},{
-                primaryKey: 'id', 
-                keys: ['nombre', 'descripcion']
+                primaryKey: 'idExposcion', 
+                keys: ['titulo', 'descripcion', 'identificador']
             },
             [  Generator.makeElement('button', {id: 'put-table-button', class: 'put-button'}, ['Editar']),
             Generator.makeElement('button', {id: 'delete-table-button', class: 'delete-button'}, ['Eliminar'])]);
 
+
+            let selectSala;
+            const cardElement = Template.SubmitCard(
+                'row-2', 'Generar Exposición',
+                [
+                    Generator.makeElement("input", {id:'card-titulo', name: 'titulo', type: "text", placeholder: 'Nombre Exposicion...',class: 'form-text' }),
+                    Generator.makeElement("input", {id:'card-descipcion', name: 'descipcion', type: "text", placeholder: 'Descripcion',class: 'form-text' }),
+                    selectSala = Generator.makeElement("select", {id:'card-sala', name: 'sala', class: "form-select"}, ['Sala']),
+                ]
+            );
+
             TableContent.then(content => {
-                document.getElementById(TableContainer).appendChild(content)
+                TableContainer.appendChild(content)
             
                 const allEditButtons =  document.querySelectorAll("#put-table-button");
                 allEditButtons.forEach(button => {
                     button.addEventListener('click', event => {
-                        console.log(event.target.value)
+                        Generator.removeAllElements(document.getElementById('row-2'));
+                        const cardEditable = Template.SubmitCard(
+                            'row-2', 'Editar Exposición',
+                            [
+                                Generator.makeElement("input", {id:'card-titulo', name: 'titulo', type: "text", placeholder: 'Nombre Exposicion...',class: 'form-text' }),
+                                Generator.makeElement("input", {id:'card-descipcion', name: 'descipcion', type: "text", placeholder: 'Descripcion',class: 'form-text' }),
+                                selectSala.cloneNode(true),
+                            ]
+                        );
+
+                        cardEditable.addEventListener('submit',  eventSubmit =>{
+                            eventSubmit.preventDefault();
+                            alert('En desarrollo...');
+                        })
+
+                        document.getElementById('row-2')
+                        .appendChild(cardEditable)
                     });
                 })
     
                 const allDeleteButtons =  document.querySelectorAll("#delete-table-button");
                 allDeleteButtons.forEach (button => {
                     button.addEventListener('click', event => {
-                        console.log(event.target.value)
-                    })
-                });
-            })
+                        const urlDelExp = '/cambiarEstadoExpo';
+                            sendForm({url: urlDelExp, method:'PATCH' }, {
+                                'idExposcion': event.target.value
+                            }, ['', undefined]).then(msg => {
+                                renderExposiciones();
+                                alert(msg.success);
+                            }).catch(msg => alert(msg.error))
+                        })
+                })
+                
+            });
+        
 
     
             document.getElementById('row-1')
@@ -271,27 +370,25 @@ export default function AdminViewsController(){
                 Generator.makeElement('button', {id: 'add-table-button', class: 'form-submit-xl'}, ['Agregar'])
             ]))
 
-
-
-
-
-            const cardElement = Template.SubmitCard(
-                'row-2', 'Generar Exposición',
-                [
-                    Generator.makeElement("input", {id:'card-titulo', name: 'titulo', type: "text", placeholder: 'Nombre Exposicion...',class: 'form-text' }),
-                    Generator.makeElement("input", {id:'card-descipcion', name: 'descipcion', type: "text", placeholder: 'Descripcion',class: 'form-text' }),
-                ]
-            );
-
-
             Manager.listenerAdder('add-table-button', 'click', (e)=>{
                 document.getElementById('row-2')
                 .appendChild(cardElement)
             })
 
-            
+            const apiUrlSalas = '/listarHabitacion';
+            consumeAPI(apiUrlSalas, {method: 'GET'}).then(data =>{
+                if (data.length >= 1) {
+                    data.forEach( ele => {
+                        selectSala.appendChild(Generator.makeElement('option', 
+                        {class:'', value: `${ele.idHabitacion}`}, [`${ele.identificador}`]))
+                    })
+                }else{
+                    selectSala.appendChild(Generator.makeElement('option', 
+                        {class:'', value: ''}, [`No tiene salas en su museo`]))
+                }
+            })
 
-            const urlPOSTExpo = '';
+            const urlPOSTExpo = '/registrarExposicion' ;
             cardElement.addEventListener ('submit', (event)=>{
                 /*CONSUME api*/ 
                 event.preventDefault();
@@ -299,8 +396,9 @@ export default function AdminViewsController(){
                 const dataParse = [...data.values()]
 
                 sendForm({url: urlPOSTExpo, method:'POST' }, {
+                    'idHabitacion': dataParse[2],
                     'titulo': dataParse[0],
-                    'descipcion': dataParse[1]
+                    'descripcion': dataParse[1]
                 }, ['', undefined]).then(msg => {
                     renderExposiciones();
                     alert(msg.success);
@@ -333,7 +431,7 @@ export default function AdminViewsController(){
     
            
             const TableContainer =  
-            Template.ContainerRecordList(['Nombre Completo', 'DNI', 'Idiomas', 'Operaciones'])
+            Template.ContainerRecordList(['Nombre', 'Apellido', 'DNI', 'Idiomas'])
             document.getElementById('row-1').appendChild(TableContainer)
 
             const listPath = '/ListarGuias';
@@ -344,21 +442,48 @@ export default function AdminViewsController(){
             [  Generator.makeElement('button', {id: 'put-table-button', class: 'put-button'}, ['Editar']),
             Generator.makeElement('button', {id: 'delete-table-button', class: 'delete-button'}, ['Eliminar'])]);
 
+                  
+            let checkContainer;
+            const cardElement = Template.SubmitCard(
+                'row-2', 'Añadir Guia',
+                [
+                    Generator.makeElement("input", {id:'card-nombre-guia', name: 'nombre-guia', type: "text", placeholder: 'Nombre...',class: 'form-text-inline' }),
+                    Generator.makeElement("input", {id:'card-apellido-guia', name: 'apellido-guia', type: "text", placeholder: 'Apellido...',class: 'form-text-inline' }),
+                    Generator.makeElement("input", {id:'card-dni-guia', name: 'dni-guia', type: "number", placeholder: 'DNI',class: 'form-text-full' }),
+                    checkContainer=Generator.makeElement("div", {id:'card-idiomas-guia', name: 'idiomas-guia', class: 'container' }),
+                ]
+            );
+
             TableContent.then(content => {
-                document.getElementById(TableContainer).appendChild(content)
+                TableContainer.appendChild(content)
             
                 const allEditButtons =  document.querySelectorAll("#put-table-button");
                 allEditButtons.forEach(button => {
-                    button.addEventListener('click', event => {
-                        console.log(event.target.value)
-                    });
-                })
-    
+                        button.addEventListener('click', event => {
+                            Generator.removeAllElements(document.getElementById('row-2'));
+                            const cardEditable = Template.SubmitCard(
+                                'row-2', 'Editar Guia',
+                                [
+                                    Generator.makeElement("input", {id:'card-nombre-guia', name: 'nombre-guia', type: "text", placeholder: 'Nombre...',class: 'form-text-inline' }),
+                                    Generator.makeElement("input", {id:'card-apellido-guia', name: 'apellido-guia', type: "text", placeholder: 'Apellido...',class: 'form-text-inline' }),
+                                    Generator.makeElement("input", {id:'card-dni-guia', name: 'dni-guia', type: "number", placeholder: 'DNI',class: 'form-text-full' }),
+                                    checkContainer.cloneNode(true),
+                                ]
+                            );
+
+                            cardEditable.addEventListener('submit',  eventSubmit =>{
+                                eventSubmit.preventDefault();
+                                alert('En desarrollo...');
+                            })
+
+                            document.getElementById('row-2')
+                            .appendChild(cardEditable)
+                        })
+                });
                 const allDeleteButtons =  document.querySelectorAll("#delete-table-button");
                 allDeleteButtons.forEach (button => {
                     button.addEventListener('click', event => {
-                        console.log(event.target.value);
-    
+            
                         const urlDelGuia = '/cambiarEstadoGuia';
                         sendForm({url: urlDelGuia, method:'POST' }, {
                             idGuia: event.target.value
@@ -379,17 +504,7 @@ export default function AdminViewsController(){
                 Generator.makeElement('button', {id: 'add-table-button', class: 'form-submit-xl'}, ['Agregar'])
             ]))
 
-      
-            let checkContainer;
-            const cardElement = Template.SubmitCard(
-                'row-2', 'Añadir Guia',
-                [
-                    Generator.makeElement("input", {id:'card-nombre-guia', name: 'nombre-guia', type: "text", placeholder: 'Nombre...',class: 'form-text-inline' }),
-                    Generator.makeElement("input", {id:'card-apellido-guia', name: 'apellido-guia', type: "text", placeholder: 'Apellido...',class: 'form-text-inline' }),
-                    Generator.makeElement("input", {id:'card-dni-guia', name: 'dni-guia', type: "number", placeholder: 'DNI',class: 'form-text-full' }),
-                    checkContainer=Generator.makeElement("div", {id:'card-idiomas-guia', name: 'idiomas-guia', class: 'container' }),
-                ]
-            );
+
 
 
             Manager.listenerAdder('add-table-button', 'click', (e)=>{
@@ -425,15 +540,17 @@ export default function AdminViewsController(){
                 const idiomas = dataParse.splice(3, dataParse.length);
 
                 sendForm({url: urlPOSTGuia, method:'POST' }, {
-                    "dni": dataParse[2],
-                    "nombre": dataParse[0],
-                    "apellido": dataParse[1],
-                    "IdIdioma": idiomas[0]
-                }, ['', undefined]).then(msg => {
+                    'dni': dataParse[2],
+                    'nombre': dataParse[0],
+                    'apellido': dataParse[1],
+                    'IdIdioma': idiomas[0]
+                }, ['', undefined, NaN]).then(msg => {
                     renderGuias();
                     alert(msg.success);
                 }).catch(msg => alert(msg.error))
             })
+
+             
 
         }
     }
@@ -459,55 +576,60 @@ export default function AdminViewsController(){
         
             
 
-            const apiUrlSalas = '';
+            const apiUrlSalas = '/listarHabitacion';
 
-            const TableContainer = Template.ContainerRecordList(['ID', 'NOMBRE', 'OPERACIONES']);
+            const TableContainer = Template.ContainerRecordList(['DESCRIPCION']);
             document.getElementById('row-1').appendChild(TableContainer);
 
-            const TableContent = Template.ContentRecordList({apiUrl: apiUrlSalas, method: 'POST'},  {primaryKey: 'id', keys: ['id', 'nombre']},
+            const TableContent = Template.ContentRecordList({apiUrl: apiUrlSalas, method: 'GET'},  {primaryKey: 'idHabitacion', keys: ['identificador']},
             [ Generator.makeElement('button', {id: 'put-table-button', class: 'put-button'}, ['Editar']),
             Generator.makeElement('button', {id: 'delete-table-button', class: 'delete-button'}, ['Eliminar'])]);
             
             TableContent.then(content => {
-                document.getElementById(TableContainer).appendChild(content)
+                TableContainer.appendChild(content)
             
                 const allEditButtons =  document.querySelectorAll("#put-table-button");
                 allEditButtons.forEach(button => {
                     button.addEventListener('click', event => {
-                        console.log(event.target.value)
-                    });
-                })
-    
+                        Generator.removeAllElements(document.getElementById('row-2'));
+                        const cardEditable = Template.SubmitCard(
+                            'row-2', 'Editar Sala',
+                            [
+                                Generator.makeElement("input", {id:'card-descripcion', name: 'descipcion', type: "text", placeholder: 'Descripcion de Sala',class: 'form-text' })
+                            ]
+                        );
+
+                        cardEditable.addEventListener('submit',  eventSubmit =>{
+                            eventSubmit.preventDefault();
+                            alert('En desarrollo...');
+                        })
+
+                        document.getElementById('row-2')
+                        .appendChild(cardEditable)
+                    })
+                });
                 const allDeleteButtons =  document.querySelectorAll("#delete-table-button");
                 allDeleteButtons.forEach (button => {
                     button.addEventListener('click', event => {
-                        console.log(event.target.value)
+                        const urlDELSalas = '/cambiarEstadoHabitacion';
+                        sendForm({url: urlDELSalas, method:'PATCH' }, {
+                            'idHabitacion': event.target.value,
+                        }, []).then(msg => {
+                            renderSalas();
+                            alert(msg.success);
+                        }).catch(msg => alert(msg.error))
                     });
                 })
             })
 
 
 
-            
-            const allEditButtons =  document.querySelectorAll("#put-table-button");
-            allEditButtons.forEach(button => {
-                button.addEventListener('click', event => {
-                    console.log(event.target.value)
-                });
-            })
-
-            const allDeleteButtons =  document.querySelectorAll("#delete-table-button");
-            allDeleteButtons.forEach (button => {
-                button.addEventListener('click', event => {
-                    console.log(event.target.value)
-                });
-            })
+ 
 
             const cardElement = Template.SubmitCard(
                 'row-2', 'Agregar Sala',
                 [
-                    Generator.makeElement("input", {id:'card-titulo', name: 'titulo', type: "text", placeholder: 'Nombre de Sala...',class: 'form-text' }),
-                    Generator.makeElement("input", {id:'card-descipcion', name: 'descipcion', type: "text", placeholder: 'Descripcion de Sala...',class: 'form-text' })
+                    Generator.makeElement("input", {id:'card-descripcion', name: 'descipcion', type: "text", placeholder: 'Descripcion de Sala',class: 'form-text' })
                 ]
             );
 
@@ -525,7 +647,7 @@ export default function AdminViewsController(){
 
 
 
-            const urlPOSTSalas = '';
+            const urlPOSTSalas = '/registrarHabitacion';
             cardElement.addEventListener ('submit', (event)=>{
                 /*CONSUME api*/ 
                 event.preventDefault();
@@ -534,8 +656,8 @@ export default function AdminViewsController(){
 
                 
                 sendForm({url: urlPOSTSalas, method:'POST' }, {
-                    'nombre-expo': dataParse[0],
-                    'descripcion-expo': dataParse[1]
+                    'idInstitucion': 1,
+                    'identificador': dataParse[0],
                 }, ['', undefined]).then(msg => {
                     renderSalas();
                     alert(msg.success);

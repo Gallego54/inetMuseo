@@ -168,66 +168,59 @@ export default function GuestViewsController(){
         ]));
 
         const TableContainer =  
-        Template.ContainerRecordList(['FECHA', 'HORA', 'IDIOMAS', 'GUIA', 'IDIOMAS', 'SUBSCRIBIRME'])
+        Template.ContainerRecordList(['Fecha', 'Hora', 'Idioma', 'SUBSCRIBIRME'])
         document.getElementById('row-1').appendChild(TableContainer)
 
         const urlVisitaGuiada ='/VisitaGuiadaView';
-        const TableContent = Template.ContentRecordList({apiUrl: urlVisitaGuiada, method: 'GET'},{
-            primaryKey: 'id', 
-            keys: ['fecha', 'hora', 'idioma', 'nombre', 'apellido']
+        const TableContent = Template.ContentRecordList({apiUrl: urlVisitaGuiada, method: 'POST'},{
+            primaryKey: 'idVisitaGuiada', 
+            keys: ['fecha', 'hora', 'idioma']
         },
         [  Generator.makeElement('button', { id: 'pop-table-button', class: 'form-submit-xl'}, ['Subscribirme'])  ]);
 
         TableContent.then(content => {
-            document.getElementById(TableContainer).appendChild(content)
+            TableContainer.appendChild(content)
         
-            const allSubscribeButtons =  document.querySelectorAll("pop-table-button");
+            const allSubscribeButtons =  document.querySelectorAll("#pop-table-button");
             allSubscribeButtons.forEach(button => {
                 button.addEventListener('click', event => {
-                    console.log(event.target.value)
-                    Generator.removeAllElements('row-2');
-
                     const cardElement = Template.SubmitCard(
                         'row-2', 'Subscribirse a Visita Guiada',
                         [
+                            Generator.makeElement("input", {id:'card-nombre', name: 'nombre', placeholder: 'Email', class: "form-text-full", type: "email"}),
                             Generator.makeElement("input", {id:'card-nombre', name: 'nombre', placeholder: 'Nombre...', class: "form-text-inline", type: "text"}),
                             Generator.makeElement("input", {id:'card-apellido', name: 'apellido', placeholder: 'Apellido...', class: "form-text-inline", type: "text"}),
                             Generator.makeElement("input", {id:'card-dni', name: 'dni', placeholder: 'DNI',  class: "form-text-full", type: "number"}),
+                            Generator.makeElement("input", {id:'card-cantidad', name: 'cantidad', placeholder: 'Cant. Personas',  class: "form-text-inline", type: "number"}),
+                            
                         ]
                     );
-        
-                    document.getElementById('row-2').appendChild(cardElement)
-        
                         
-                    cardElement.addEventListener('submit', event => {
-                        event.preventDefault();
-                        const data = new FormData(event.target);
+                    let child;
+                    if (child = document.getElementById('row-2').lastChild) {
+                        document.getElementById('row-2').removeChild(child)
+                    }document.getElementById('row-2').appendChild(cardElement);
+
+                        
+                    cardElement.addEventListener('submit', eventFom => {
+                        eventFom.preventDefault();
+                        const data = new FormData(eventFom.target);
                         const dataParse = [...data.values()]
         
-                        /*
-                            const validate = new validationService(['', undefined]);
-                            sendForm('url', {data: 123}, validate)
-                        
-                        */ 
-                        const urlPOSTVisita ='/postvisita';
+
+
+                        const urlPOSTVisita ='/InscripcionCreate';
                         sendForm({url: urlPOSTVisita, method:'POST' }, {
-                            idVisita: event.target.value,
-                            nombre: dataParse[0],
-                            apellido: dataParse[1],
-                            dni: dataParse[2]
+                            idVisitaGuiada: event.target.value,
+                            nombre: dataParse[1],
+                            apellido: dataParse[2],
+                            dni: dataParse[3],
+                            mail: dataParse[0],
+                            cantPersonas: dataParse[4]
                         }, ['', undefined]).then(msg => {
                             renderReserva();
                             alert(msg.success)
                         }).catch(msg => alert(msg.error))
-
-                        console.log(
-                            {
-                                idVisita: event.target.value,
-                                nombre: dataParse[0],
-                                apellido: dataParse[1],
-                                dni: dataParse[2]
-                            }
-                        )
                     })
 
                 });
@@ -313,7 +306,7 @@ export default function GuestViewsController(){
                     Generator.makeElement('div', {class: 'col'}, [
                         Generator.makeElement('h2', {class: 'title-content'}, ['Discapacidad Visual']),
                         Generator.makeElement('div', {class: 'icon-blind'}),
-                    Generator.makeElement('p', {class:'top-content'}, ['Los problemas de visión son los más comunes en personas adultas. Problemas tales como, vista corta (miopía), hipermetropía, astigmatismo y presbicia e incluso la ceguera completa pueden llegar a aparecer.  Estos problemas provocan dificultad para disfrutar las muestras de los museos. Por esa razon somos el primer museo de mar de plata que tiene funcionalidades para personas con dificultades visuales en todos sus niveles'])
+                    Generator.makeElement('p', {class:'top-content'}, ['Los problemas de visión son los más comunes en personas adultas. Problemas tales como, vista corta (miopía), hipermetropía, astigmatismo y presbicia e incluso la ceguera completa pueden llegar a aparecer.  Estos problemas provocan dificultad para disfrutar las muestras de los museos. Por esa razon somos el primer museo de mar de plata que tiene funcionalidades para personas con dificultades visuales en todos sus niveles.'])
                     ]),
 
                     Generator.makeElement('div', {class: 'col'}, [
@@ -326,7 +319,7 @@ export default function GuestViewsController(){
                     Generator.makeElement('div', {class: 'col'}, [
                         Generator.makeElement('h2', {class: 'title-content'}, ['Discapacidad Motriz']),
                         Generator.makeElement('div', {class: 'icon-chair'}),
-                        Generator.makeElement('p', {class: 'top-content'}, ['Nuestro museo se encuentra completamente acoplado para personas con discapacidades motriz, queremos que el arte pueda llegar a todos y todas, no importa su condicion. Porque el arte es una parte importante del ser humano y como seres humanos tenemos que tener el derecho de contemplar y conocer'])
+                        Generator.makeElement('p', {class: 'top-content'}, ['Nuestro museo se encuentra completamente acoplado para personas con discapacidades motriz, queremos que el arte pueda llegar a todos y todas, no importa su condicion. Porque el arte es una parte importante del ser humano y como seres humanos tenemos que tener el derecho de contemplar y conocer.'])
                     ]),
 
                     Generator.makeElement('div', {class: 'col'}, [

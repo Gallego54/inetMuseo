@@ -8,7 +8,7 @@ export default function validationService ( conditions ) {
     function validateData ( dataObject ) {
         try {
             const dataArray = Object.values(dataObject);
-            console.log(conditions)
+            //console.log(conditions)
     
             conditions.forEach(condition => {
                 if (dataArray.includes(condition)){
